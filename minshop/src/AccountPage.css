@@ -1,0 +1,527 @@
+.account-container {
+    display: flex;
+    gap: 24px;
+    min-height: 90vh;
+    padding: 40px;
+    background: #f4f4f4;
+    font-family: "Inter", sans-serif;
+    margin-top: 50px;
+}
+
+/* Sidebar */
+.account-sidebar {
+    width: 260px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.sidebar-item:hover {
+    background-color: #d4d4d4;
+}
+
+.sidebar-item.active {
+    background: #ffffff;
+}
+
+/* Nội dung */
+.account-content {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    padding: 40px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.account-content h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.account-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+.info-section {
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 8px 0;
+}
+
+.info-label {
+    color: #333;
+    font-weight: 500;
+}
+
+.info-value {
+    color: #555;
+    text-align: right;
+    width: 50%;
+}
+
+.btn-update {
+    margin-top: 20px;
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 8px 20px;
+    background: transparent;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-update:hover {
+    background: black;
+    color: white;
+}
+
+/* --- SỔ ĐỊA CHỈ --- */
+.address-book {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-add-address {
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-add-address:hover {
+    opacity: 0.85;
+}
+
+.no-address {
+    color: #777;
+    font-style: italic;
+    text-align: right;
+    padding: 20px 10px;
+}
+
+.address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.address-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+
+.address-item:hover {
+    background: #f5f5f5;
+}
+
+.address-info {
+    font-size: 15px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Dấu tích mặc định */
+.default-icon {
+    color: #00b14f;
+    font-weight: bold;
+    margin-left: 6px;
+    font-size: 18px;
+}
+
+/* Nhóm nút hành động */
+.address-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.address-actions button {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.btn-set-default {
+    background-color: #00b14f;
+    color: white;
+}
+
+.btn-edit {
+    background-color: #ffd54f;
+    color: #333;
+}
+
+.btn-delete {
+    background-color: #e57373;
+    color: white;
+}
+
+.address-actions button:hover {
+    opacity: 0.9;
+}
+
+
+/* Nền mờ xung quanh */
+/* Toàn màn hình mờ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Khung nội dung modal */
+.modal-content {
+    background: #fff;
+    border-radius: 16px;
+    width: 420px;
+    max-width: 90%;
+    padding: 24px 28px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    animation: fadeInUp 0.25s ease-in-out;
+}
+
+/* Hiệu ứng mở modal */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tiêu đề */
+.modal-content h2 {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Hai ô input cùng hàng */
+.form-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.form-group input {
+    flex: 1;
+}
+
+/* Input và select full chiều rộng */
+.full-input,
+.form-group input,
+select.full-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+input:focus,
+select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 3px rgba(0, 123, 255, 0.4);
+}
+
+/* Checkbox */
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Nút */
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel,
+.btn-save {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.btn-cancel:hover {
+    background: #e2e2e2;
+}
+
+.btn-save {
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-save:hover {
+    background: #0056d8;
+}
+
+/* Responsive nhỏ */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 25px;
+    width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+h2 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.form-group {
+    display: flex;
+    gap: 10px;
+}
+
+.full-input,
+select {
+    width: 100%;
+    margin: 8px 0;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.btn-save {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+}
+
+.btn-cancel {
+    background: #ccc;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.order-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.order-status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.status-pending {
+    background: #f0ad4e;
+}
+
+.status-processing {
+    background: #5bc0de;
+}
+
+.status-shipped {
+    background: #0275d8;
+}
+
+.status-delivered {
+    background: #5cb85c;
+}
+
+.status-cancelled {
+    background: #d9534f;
+}
+
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.order-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #333;
+}
+
+.order-total {
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+    padding-top: 10px;
+    text-align: right;
+    font-size: 16px;
+}
+
+.order-address {
+    color: #666;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

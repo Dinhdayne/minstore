@@ -1,0 +1,735 @@
+/* ============================= */
+/* 💼 QUẢN LÝ SẢN PHẨM - ADMIN */
+/* ============================= */
+
+.products-container {
+    padding: 20px;
+    background-color: #f8f9fb;
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+}
+
+.products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.products-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+}
+
+.btn-add {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.btn-add:hover {
+    background-color: #0062d1;
+}
+
+/* ============================= */
+/* 📦 BẢNG SẢN PHẨM */
+/* ============================= */
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.products-table th {
+    background-color: #f3f4f6;
+    color: #333;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.products-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    font-size: 15px;
+    color: #444;
+}
+
+.products-table tr:hover {
+    background-color: #f9fafc;
+}
+
+.status-active {
+    background-color: #d4f8e8;
+    color: #107e46;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.status-inactive {
+    background-color: #ffe7e7;
+    color: #a92929;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+    margin-right: 5px;
+}
+
+.btn-edit {
+    background-color: #f3f3f3;
+    color: #333;
+}
+
+.btn-edit:hover {
+    background-color: #e5e5e5;
+}
+
+.btn-delete {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #e13d3d;
+}
+
+.add-product-form select {
+    width: 100%;
+    padding: 8px;
+    margin: 6px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* ============================= */
+/* 🎨 BẢNG BIẾN THỂ */
+/* ============================= */
+
+.variant-table {
+    width: 95%;
+    margin: 15px auto;
+    border-collapse: collapse;
+    background-color: #fafafa;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.variant-table th {
+    background-color: #f1f2f5;
+    color: #444;
+    padding: 8px 10px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.variant-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+}
+
+.variant-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+/* ============================= */
+/* 🔧 NÚT TRONG BIẾN THỂ */
+/* ============================= */
+
+.btn-edit-small,
+.btn-delete-small,
+.btn-save,
+.btn-cancel {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-right: 4px;
+    transition: 0.2s;
+}
+
+.btn-edit-small {
+    background-color: #eee;
+    color: #333;
+}
+
+.btn-edit-small:hover {
+    background-color: #ddd;
+}
+
+.btn-delete-small {
+    background-color: #f76d6d;
+    color: white;
+}
+
+.btn-delete-small:hover {
+    background-color: #e15555;
+}
+
+.btn-save {
+    background-color: #4caf50;
+    color: white;
+}
+
+.btn-save:hover {
+    background-color: #3f9144;
+}
+
+.btn-cancel {
+    background-color: #ccc;
+    color: #222;
+}
+
+.btn-cancel:hover {
+    background-color: #b5b5b5;
+}
+
+/* ============================= */
+/* 🔍 NHẬP DỮ LIỆU BIẾN THỂ */
+/* ============================= */
+
+.variant-table input {
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.variant-table input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+/* ============================= */
+/* 🧩 CẢNH BÁO RỖNG */
+/* ============================= */
+.no-data {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-size: 15px;
+}
+
+/* ============================= */
+/* ⏬ MỞ/ĐÓNG BIẾN THỂ */
+/* ============================= */
+
+.toggle-cell {
+    width: 40px;
+    text-align: center;
+}
+
+.btn-toggle {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #333;
+    transition: transform 0.2s;
+}
+
+.btn-toggle:hover {
+    transform: scale(1.2);
+    color: #007bff;
+}
+
+.variant-cell {
+    background-color: #fafafa;
+    padding: 10px 20px;
+}
+
+.expand-cell {
+    text-align: center;
+    width: 40px;
+}
+
+.expand-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    transition: transform 0.2s;
+}
+
+.expand-btn:hover {
+    transform: scale(1.2);
+}
+
+/* ==== USER TABLE ==== */
+.users-container {
+    margin-top: 30px;
+}
+
+.role-admin {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+.role-user {
+    color: #555;
+}
+
+.btn-toggle {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin: 0 3px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-toggle:hover {
+    background-color: #3498db;
+}
+
+/* ==== CATEGORY MANAGEMENT ==== */
+.add-brand-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.add-brand-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    flex: 1 1 200px;
+}
+
+.add-brand-form .btn-add {
+    background-color: #3498db;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.add-brand-form .btn-add:hover {
+    background-color: #2980b9;
+}
+
+/* === Quản lý Brand === */
+.brands-container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-top: 20px;
+}
+
+.brands-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.brands-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.btn-add {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #0056b3;
+}
+
+/* === Bảng hiển thị brand === */
+.brands-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.brands-table th,
+.brands-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+}
+
+.brands-table th {
+    background-color: #f8f8f8;
+    color: #555;
+    font-weight: 600;
+}
+
+.brand-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    /* 👈 giữ tỉ lệ gốc */
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 4px;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.btn-edit {
+    background-color: #ffc107;
+    color: #fff;
+    margin-right: 6px;
+}
+
+.btn-edit:hover {
+    background-color: #e0a800;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn-delete:hover {
+    background-color: #b02a37;
+}
+
+.admin-container {
+    padding: 20px;
+    background-color: #fff;
+}
+
+.products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.btn-add {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.add-product-form {
+    background: #f9f9f9;
+    padding: 16px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.add-product-form input,
+.add-product-form textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.add-product-form .form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-save {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #ccc;
+    color: #000;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.variant-row {
+    background-color: #f3f3f3;
+}
+
+.variant-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.variant-table th,
+.variant-table td {
+    border: 1px solid #ccc;
+    padding: 6px;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.order-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.order-status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.status-pending {
+    background: #f0ad4e;
+}
+
+.status-processing {
+    background: #5bc0de;
+}
+
+.status-shipped {
+    background: #0275d8;
+}
+
+.status-delivered {
+    background: #5cb85c;
+}
+
+.status-cancelled {
+    background: #d9534f;
+}
+
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.order-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #333;
+}
+
+.order-total {
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+    padding-top: 10px;
+    text-align: right;
+    font-size: 16px;
+}
+
+.order-address {
+    color: #666;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.add-variant-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.add-variant-form input {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 120px;
+    font-size: 14px;
+}
+
+.btn-add-small {
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-edit-small {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 5px;
+    margin-right: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-delete-small {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-save {
+    background: #10b981;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: #9ca3af;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: none;
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal h3 {
+    margin-bottom: 10px;
+}
+
+.modal-footer {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.btn-view {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-view:hover {
+    background: #0056b3;
+}
+
+select {
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
