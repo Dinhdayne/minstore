@@ -10,8 +10,8 @@ const Products = ({ products = [], error }) => {
     const { user, isAuthenticated } = useAuth();
     const [selectedVariants, setSelectedVariants] = useState({});
     const [selectedImages, setSelectedImages] = useState({});
-    const [selectedColor, setSelectedColor] = useState(null); // 🟢 Thêm dòng này
-    const [selectedSize, setSelectedSize] = useState(null);   // 🟢 Thêm dòng này
+    const [selectedColor, setSelectedColor] = useState(null);
+    const [selectedSize, setSelectedSize] = useState(null);
     const sliderRef = useRef(null);
     const [index, setIndex] = useState(0);
 
@@ -113,8 +113,13 @@ const Products = ({ products = [], error }) => {
         if (!sliderRef.current) return;
         const cardWidth = sliderRef.current.querySelector(".product-card").offsetWidth;
         const containerWidth = sliderRef.current.offsetWidth;
-        const visibleCards = Math.floor(containerWidth / cardWidth);
-        const maxIndex = Math.max(0, products.length - visibleCards);
+        const visibleCards = 6;
+        for (const product of products) {
+            if (product.is_active === 0) {
+                visibleCards = visibleCards + 1;
+            }
+        }
+        const maxIndex = products.length - visibleCards;
 
         let newIndex = index;
         if (direction === "next" && index < maxIndex) newIndex = index + 1;
@@ -143,7 +148,7 @@ const Products = ({ products = [], error }) => {
             <div className="container">
                 <div className="products-header">
                     <h2>SẢN PHẨM KHUYẾN MÃI</h2>
-                    <div className="arrow">
+                    <div className="arrowp">
                         <button onClick={() => scroll("prev")}>&#10094;</button>
                         <button onClick={() => scroll("next")}>&#10095;</button>
                     </div>

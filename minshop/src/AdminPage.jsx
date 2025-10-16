@@ -5,6 +5,9 @@ import AdminUsers from "./admin/AdminUsers";
 import AdminCategories from "./admin/AdminCategories";
 import AdminBrands from "./admin/AdminBrands";
 import AdminOrders from "./admin/AdminOrders";
+import AdminReports from "./admin/Statistics";
+import AdminPurchases from "./admin/AdminPurchases";
+import AdminSuppliers from "./admin/AdminSuppliers";
 
 const AccountPage = () => {
     const [activeTab, setActiveTab] = useState("Products");
@@ -12,12 +15,12 @@ const AccountPage = () => {
     const menuItems = [
         "Products",
         "Categories",
+        "Brands",
         "Suppliers",
         "Users",
         "Orders",
         "Purchases",
-        "Inventory",
-        "Reports",
+        "Statistics",
         "Coupons",
         "Chat",
     ];
@@ -76,31 +79,24 @@ const AccountPage = () => {
             case "Orders":
                 return <AdminOrders />;
 
-
             case "Purchases":
+                return <AdminPurchases />;
+
+            case "Statistics":
+                return <AdminReports />;
+
+            case "Brands":
+                return <AdminBrands />;
+
+            case "Coupons":
                 return (
                     <>
-                        <h2>Purchases</h2>
-                        <p>Chưa có đánh giá nào.</p>
-                    </>
-                );
-            case "Inventory":
-                return (
-                    <>
-                        <h2>Inventory</h2>
-                        <p>Chưa có đánh giá nào.</p>
-                    </>
-                );
-            case "Reports":
-                return (
-                    <>
-                        <h2>Reports</h2>
+                        <h2>Chat</h2>
                         <p>Chưa có đánh giá nào.</p>
                     </>
                 );
             case "Suppliers":
-                return <AdminBrands />;
-            case "Coupons":
+                return <AdminSuppliers />;
 
             case "Chat":
                 return (

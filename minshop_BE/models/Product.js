@@ -55,6 +55,13 @@ class Product {
         return rows;
     }
 
+    static async findVariants() {
+        const [rows] = await pool.query(`
+            SELECT * FROM Product_Variants;
+        `);
+        return rows;
+    }
+
     // 🔍 Lấy 1 sản phẩm theo ID
     static async findById(productId) {
         const [rows] = await pool.query(`

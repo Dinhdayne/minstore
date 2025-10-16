@@ -13,6 +13,15 @@ const getProducts = async (req, res) => {
     }
 };
 
+const getVariants = async (req, res) => {
+    try {
+        const variants = await Product.findVariants();
+        res.json(variants);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+};
+
 const getProductById = async (req, res) => {
     try {
         const id = req.params.id; // Lấy id từ URL, ví dụ: /products/:id
@@ -122,4 +131,4 @@ const deleteVariants = async (req, res) => {
     }
 };
 
-module.exports = { getProducts, getProductsByCategory, getProductById, createProducts, updateProducts, deleteProduct, createVariantsAndImages, updateVariantById, deleteVariants };
+module.exports = { getProducts, getProductsByCategory, getProductById, createProducts, updateProducts, deleteProduct, createVariantsAndImages, updateVariantById, deleteVariants, getVariants };

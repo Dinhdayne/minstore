@@ -8,8 +8,12 @@ const Categories = ({ categories, error }) => {
     const scroll = (direction) => {
         const cardWidth = sliderRef.current.querySelector(".category-card").offsetWidth;
         const visibleCards = 4;
+        for (const categorie of categories) {
+            if (categorie.is_active === 0) {
+                visibleCards = visibleCards + 1;
+            }
+        }
         const maxIndex = categories.length - visibleCards;
-
         let newIndex = index;
         if (direction === "next" && index < maxIndex) newIndex = index + 1;
         else if (direction === "prev" && index > 0) newIndex = index - 1;
@@ -35,12 +39,15 @@ const Categories = ({ categories, error }) => {
                     <div className="categories-wrapper">
                         <div className="category-grid" ref={sliderRef}>
                             {categories.map((category) => (
-                                <div key={category.category_id} className="category-card">
-                                    <img src={category.image_url} alt={category.name} />
-                                    <div className="overlay">
-                                        <h3>{category.name}</h3>
+                                category.is_active === 1 ? (
+                                    <div key={category.category_id} className="category-card">
+                                        <img src={category.image_url} alt={category.name} />
+                                        <div className="overlay">
+                                            <h3>{category.name}</h3>
+                                        </div>
                                     </div>
-                                </div>
+                                )
+                                    : null
                             ))}
                         </div>
                     </div>

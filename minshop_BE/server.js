@@ -13,6 +13,9 @@ const cartRoutes = require('./routes/cartRoutes');
 const userProfileRoutes = require('./routes/userProfileRoutes');
 const brandRoutes = require('./routes/brandRoutes');
 const addressRoutes = require('./routes/addressRoutes');
+const statisticsRoutes = require('./routes/statisticsRoutes');
+const purchaseRoutes = require('./routes/purchaseRoutes');
+const supplierRoutes = require('./routes/supplierRoutes');
 const { OAuth2Client } = require("google-auth-library");
 
 dotenv.config();
@@ -34,6 +37,9 @@ app.use('/api', userProfileRoutes);
 app.use('/api', brandRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api', orderRoutes);
+app.use('/api/statistics', statisticsRoutes);
+app.use('/api/purchases', purchaseRoutes);
+app.use('/api/suppliers', supplierRoutes);
 const client = new OAuth2Client("YOUR_GOOGLE_CLIENT_ID"); // lấy từ Google Console
 
 // Route xác thực Google

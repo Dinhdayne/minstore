@@ -18,7 +18,7 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign({ id: account.id, role: account.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, role: account.role , id : account.id});
+        res.json({ token, role: account.role, id: account.id });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
@@ -64,26 +64,26 @@ const changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
         const accountId = req.user.id;
-        
+
         // Lấy thông tin tài khoản hiện tại
         const account = await Account.findById(accountId);
         if (!account) {
             return res.status(404).json({ message: 'Không tìm thấy tài khoản' });
         }
-        
+
         // Kiểm tra mật khẩu hiện tại
         const isMatch = await bcrypt.compare(currentPassword, account.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Mật khẩu hiện tại không đúng' });
         }
-        
+
         // Mã hóa mật khẩu mới
         const saltRounds = 10;
         const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
-        
+
         // Cập nhật mật khẩu
         await Account.updatePassword(accountId, hashedNewPassword);
-        
+
         res.json({ message: 'Đổi mật khẩu thành công' });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
