@@ -16,7 +16,7 @@ const Login = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const { login } = useAuth();
+    const { login, logout } = useAuth();
 
     const handleSuccess = async (credentialResponse) => {
         try {
@@ -26,12 +26,24 @@ const Login = () => {
 
             // Gọi API backend xác thực token Google
             const res = await googleLogin(token);
-
+            console.log("Response từ backend sau khi gửi token Google:", res.data);
             // lưu user + token vào context
             login(res.data.user, res.data.token);
-
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("role", res.data.user.role);
+            localStorage.setItem("id", res.data.user.user_id);
             // chuyển hướng sau khi đăng nhập thành công
-            navigate("/");
+            if (res.data.user.role === "admin") {
+                navigate("/AdminPage");
+            } else {
+                if (res.data.user.is_active === 1) {
+                    navigate("/");
+                }
+                else {
+                    logout();
+                    setError("Tài khoản của bạn đã bị khóa");
+                }
+            }
         } catch (err) {
             console.error("Login Failed:", err);
             setError("Đăng nhập Google thất bại");
@@ -58,7 +70,7 @@ const Login = () => {
             });
 
             const data = await response.json();
-
+            console.log("Dữ liệu API trả về:", data);
             if (!response.ok || !data.token) {
                 setError(data.message || "Tên đăng nhập hoặc mật khẩu không đúng");
                 return;
@@ -70,7 +82,7 @@ const Login = () => {
             localStorage.setItem("id", data.id);
 
             if (data.role === "admin") {
-                navigate("/admin-dashboard");
+                navigate("/AdminPage");
             } else {
                 navigate("/");
             }

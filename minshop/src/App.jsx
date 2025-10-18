@@ -8,19 +8,23 @@ import Header from "./components/Header";
 import Banner from "./components/Banner";
 import Categories from "./components/Categories";
 import Products from "./components/Products";
+import Best from "./components/Best-selling";
 import Footer from "./components/Footer";
 import Login from "./Login";
 import CartPage from "./CartPage";
 import AccountPage from "./AccountPage";
 import AdminPage from "./AdminPage";
+import ProductDetail from "./ProductDetail";
 
-import { getProducts, getCategories } from "./include/api";
+import { getProducts, getCategories, getProductTOP, getProductSale } from "./include/api";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   const [products, setProducts] = useState([]);
+  const [productSales, setProductSales] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [productTOP, setProductTOP] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -29,13 +33,21 @@ function App() {
       try {
         setLoading(true);
         const productsData = await getProducts();
+        const productSalesData = await getProductSale();
         const categoriesData = await getCategories();
+        const bestSellingProducts = await getProductTOP();
 
         if (productsData.error) setError(productsData.error);
         else setProducts(productsData);
 
+        if (productSalesData.error) setError(productSalesData.error);
+        else setProductSales(productSalesData);
+
         if (categoriesData.error) setError(categoriesData.error);
         else setCategories(categoriesData);
+
+        if (bestSellingProducts.error) setError(bestSellingProducts.error);
+        else setProductTOP(bestSellingProducts);
       } catch (err) {
         setError("Lỗi khi tải dữ liệu: " + err.message);
       } finally {
@@ -60,7 +72,8 @@ function App() {
                 <>
                   <Banner />
                   <Categories categories={categories} error={error} />
-                  <Products products={products} error={error} />
+                  <Products products={productSales} error={error} />
+                  <Best products={productTOP} error={error} />
                 </>
               }
             />
@@ -68,6 +81,7 @@ function App() {
             <Route path="/CartPage" element={<CartPage />} />
             <Route path="/AccountPage" element={<AccountPage />} />
             <Route path="/AdminPage" element={<AdminPage />} />
+            <Route path="/:id" element={<ProductDetail />} />
           </Routes>
           <Footer />
         </Router>

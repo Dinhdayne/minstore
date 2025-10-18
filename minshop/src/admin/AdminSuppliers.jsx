@@ -40,13 +40,17 @@ const AdminSuppliers = () => {
 
         try {
             const method = editing ? "PUT" : "POST";
+            const token = localStorage.getItem("token");
             const url = editing
                 ? `http://localhost:3000/api/suppliers/${editing.supplier_id}`
                 : "http://localhost:3000/api/suppliers";
 
             const res = await fetch(url, {
                 method,
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
                 body: JSON.stringify(newSupplier),
             });
 
@@ -62,7 +66,14 @@ const AdminSuppliers = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Xóa nhà cung cấp này?")) return;
         try {
-            await fetch(`http://localhost:3000/api/suppliers/${id}`, { method: "DELETE" });
+            const token = localStorage.getItem("token");
+            await fetch(`http://localhost:3000/api/suppliers/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             await fetchSuppliers();
         } catch (err) {
             console.error("Lỗi khi xóa:", err);

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { getProducts, getVariants, getProductsByCategory, getProductById, createProducts, updateProducts, deleteProduct, createVariantsAndImages, updateVariantById, deleteVariants } = require('../controllers/productController');
+const { getProducts, getProductsOnSale, getVariants, getProductsByCategory, getTopProducts, getProductById, createProducts, updateProducts, deleteProduct, createVariantsAndImages, updateVariantById, deleteVariants } = require('../controllers/productController');
 
 const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -19,6 +19,8 @@ const authenticateToken = async (req, res, next) => {
 };
 
 router.get('/products', getProducts);
+router.get('/product/sale', getProductsOnSale);
+router.get('/products/top', getTopProducts);
 router.get('/products/category/:categoryId', getProductsByCategory);
 router.get('/products/:id', getProductById);
 router.get('/variants', getVariants);

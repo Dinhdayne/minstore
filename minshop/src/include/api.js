@@ -103,6 +103,36 @@ export const getProduct = async (productId) => {
     return result;
 };
 
+export const getProductTOP = async (productId) => {
+    const url = `http://localhost:3000/api/products/top`;
+    const result = await makeApiRequest(url);
+
+    if (result.error) {
+        console.error(`Failed to get product ${productId}: ${result.error}`);
+        return result;
+    }
+
+    if (!result || Object.keys(result).length === 0) {
+        return { error: `Không tìm thấy sản phẩm với ID: ${productId}` };
+    }
+
+    return result;
+};
+export const getProductSale = async (productId) => {
+    const url = `http://localhost:3000/api/product/sale`;
+    const result = await makeApiRequest(url);
+
+    if (result.error) {
+        console.error(`Failed to get product ${productId}: ${result.error}`);
+        return result;
+    }
+
+    if (!result || Object.keys(result).length === 0) {
+        return { error: `Không tìm thấy sản phẩm với ID: ${productId}` };
+    }
+
+    return result;
+};
 /**
  * Get product price by ID
  * @param {number} productId

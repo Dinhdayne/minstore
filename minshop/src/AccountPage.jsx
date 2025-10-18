@@ -62,9 +62,13 @@ const AddAddressModal = ({ onClose, onSaved }) => {
         };
 
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch("http://localhost:3000/api/addresses", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
                 body: JSON.stringify(addressData),
             });
 
@@ -355,7 +359,16 @@ const AccountPage = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user?.user_id) return;
         try {
-            const res = await fetch(`http://localhost:3000/api/addresses/user/${user.user_id}`);
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:3000/api/addresses/user/${user.user_id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            }
+            );
+
             const data = await res.json();
             if (res.ok) setAddresses(data);
         } catch (error) {
@@ -365,8 +378,13 @@ const AccountPage = () => {
     // 🔹 Đặt mặc định
     const handleSetDefault = async (addressId) => {
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch(`http://localhost:3000/api/addresses/set-default/${addressId}`, {
                 method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
             });
             const data = await res.json();
             if (res.ok) {
@@ -385,8 +403,13 @@ const AccountPage = () => {
     const handleDeleteAddress = async (addressId) => {
         if (!window.confirm("Bạn có chắc muốn xoá địa chỉ này không?")) return;
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch(`http://localhost:3000/api/addresses/${addressId}`, {
                 method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
             });
             const data = await res.json();
             if (res.ok) {

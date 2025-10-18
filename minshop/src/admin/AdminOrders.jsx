@@ -13,7 +13,14 @@ const AdminOrders = () => {
     const fetchOrders = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:3000/api/orders/all");
+            const token = localStorage.getItem("token");
+            const res = await fetch("http://localhost:3000/api/orders/all", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Không thể tải đơn hàng");
             setOrders(data);
@@ -27,7 +34,14 @@ const AdminOrders = () => {
     // 🟦 Lấy chi tiết đơn hàng
     const fetchOrderDetails = async (orderId) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/orders/${orderId}`);
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
             const data = await res.json();
             if (res.ok) setOrderDetails(data);
             else alert(data.message);
@@ -40,8 +54,13 @@ const AdminOrders = () => {
     // 🟦 Cập nhật tồn kho khi đơn hàng đã giao
     const updateStockAfterDelivery = async (orderId) => {
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch(`http://localhost:3000/api/orders/${orderId}/update-stock`, {
                 method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
             });
             const data = await res.json();
             if (res.ok) {
@@ -60,9 +79,13 @@ const AdminOrders = () => {
 
         try {
             setUpdating(true);
+            const token = localStorage.getItem("token");
             const res = await fetch(`http://localhost:3000/api/orders/${orderId}/status`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
                 body: JSON.stringify({ status: newStatus }),
             });
             const data = await res.json();

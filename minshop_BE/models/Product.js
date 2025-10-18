@@ -16,6 +16,7 @@ class Product {
                 p.is_active,
                 p.created_at,
                 p.updated_at,
+                p.sale,
                 c.name AS category_name,
                 b.name AS brand_name,
                 CONCAT(
@@ -55,6 +56,142 @@ class Product {
         return rows;
     }
 
+    static async findAllSale() {
+        const [rows] = await pool.query(`
+            SELECT 
+                p.product_id,
+                p.name,
+                p.description,
+                CAST(p.base_price AS DECIMAL(10, 2)) AS base_price,
+                p.sku,
+                p.category_id,
+                p.brand_id,
+                CAST(p.weight AS DECIMAL(5, 2)) AS weight,
+                p.is_active,
+                p.created_at,
+                p.updated_at,
+                p.sale,
+                c.name AS category_name,
+                b.name AS brand_name,
+                CONCAT(
+                    '[',
+                    GROUP_CONCAT(
+                        DISTINCT JSON_OBJECT(
+                            'variant_id', pv.variant_id,
+                            'price', CAST(pv.price AS DECIMAL(10, 2)),
+                            'stock_quantity', pv.stock_quantity,
+                            'sku', pv.sku,
+                            'attributes', pv.attributes
+                        )
+                    ),
+                    ']'
+                ) AS variants,
+                CONCAT(
+                    '[',
+                    GROUP_CONCAT(
+                        DISTINCT JSON_OBJECT(
+                            'image_id', pi.image_id,
+                            'image_url', pi.image_url,
+                            'is_primary', pi.is_primary,
+                            'alt_text', pi.alt_text,
+                            'variant_id', pi.variant_id
+                        )
+                    ),
+                    ']'
+                ) AS images
+            FROM Products p
+            LEFT JOIN Product_Variants pv ON p.product_id = pv.product_id
+            LEFT JOIN Product_Images pi ON p.product_id = pi.product_id
+            LEFT JOIN Categories c ON p.category_id = c.category_id
+            LEFT JOIN Brands b ON p.brand_id = b.brand_id
+            WHERE p.sale > 0
+            GROUP BY p.product_id
+            ORDER BY p.created_at DESC;
+            
+        `);
+        return rows;
+    }
+
+    static async findAlltopProduct(limit = 10, days = 7) {
+        const [rows] = await pool.query(
+            `
+    SELECT
+      p.product_id,
+      p.name,
+      p.description,
+      CAST(p.base_price AS DECIMAL(10,2)) AS base_price,
+      p.sku,
+      p.category_id,
+      p.brand_id,
+      CAST(p.weight AS DECIMAL(5,2)) AS weight,
+      p.is_active,
+      p.created_at,
+      p.updated_at,
+      p.sale,
+      c.name AS category_name,
+      b.name AS brand_name,
+
+      -- Lấy tổng bán và doanh thu từ subquery (đã aggregate)
+      COALESCE(s.total_sold, 0) AS total_sold,
+      COALESCE(s.total_revenue, 0) AS total_revenue,
+
+      -- Gộp variants (GROUP_CONCAT trên pv)
+      CONCAT(
+        '[',
+        GROUP_CONCAT(DISTINCT JSON_OBJECT(
+          'variant_id', pv.variant_id,
+          'price', CAST(pv.price AS DECIMAL(10,2)),
+          'stock_quantity', pv.stock_quantity,
+          'sku', pv.sku,
+          'attributes', pv.attributes
+        ) ORDER BY pv.variant_id SEPARATOR ','),
+        ']'
+      ) AS variants,
+
+      -- Gộp images
+      CONCAT(
+        '[',
+        GROUP_CONCAT(DISTINCT JSON_OBJECT(
+          'image_id', pi.image_id,
+          'image_url', pi.image_url,
+          'is_primary', pi.is_primary,
+          'alt_text', pi.alt_text,
+          'variant_id', pi.variant_id
+        ) ORDER BY pi.image_id SEPARATOR ','),
+        ']'
+      ) AS images
+
+    FROM Products p
+    LEFT JOIN Categories c ON p.category_id = c.category_id
+    LEFT JOIN Brands b ON p.brand_id = b.brand_id
+
+    -- variants & images (chỉ để gộp thông tin hiển thị)
+    LEFT JOIN Product_Variants pv ON p.product_id = pv.product_id
+    LEFT JOIN Product_Images pi ON p.product_id = pi.product_id
+
+    -- subquery tính tổng bán theo product (aggregate trước để tránh nhân bản)
+    LEFT JOIN (
+      SELECT pv.product_id,
+             SUM(oi.quantity) AS total_sold,
+             SUM(oi.price * oi.quantity) AS total_revenue
+      FROM Order_Items oi
+      JOIN Product_Variants pv ON oi.variant_id = pv.variant_id
+      JOIN Orders o ON oi.order_id = o.order_id
+        AND o.status IN ('delivered','shipped')
+        AND o.order_date >= DATE_SUB(NOW(), INTERVAL ? DAY)
+      GROUP BY pv.product_id
+    ) s ON p.product_id = s.product_id
+
+    GROUP BY p.product_id
+    ORDER BY total_sold DESC, p.created_at DESC
+    LIMIT ?;
+    `,
+            [days, limit]
+        );
+
+        return rows;
+    }
+
     static async findVariants() {
         const [rows] = await pool.query(`
             SELECT * FROM Product_Variants;
@@ -62,7 +199,7 @@ class Product {
         return rows;
     }
 
-    // 🔍 Lấy 1 sản phẩm theo ID
+    // Lấy 1 sản phẩm theo ID
     static async findById(productId) {
         const [rows] = await pool.query(`
             SELECT 
@@ -77,6 +214,7 @@ class Product {
                 p.is_active,
                 p.created_at,
                 p.updated_at,
+                p.sale,
                 c.name AS category_name,
                 b.name AS brand_name,
                 CONCAT(
@@ -116,7 +254,7 @@ class Product {
         return rows[0];
     }
 
-    // 🧩 Lấy sản phẩm theo danh mục
+    // Lấy sản phẩm theo danh mục
     static async findByCategory(categoryId) {
         const [rows] = await pool.query(`
             SELECT 
@@ -131,6 +269,7 @@ class Product {
                 p.is_active,
                 p.created_at,
                 p.updated_at,
+                p.sale,
                 c.name AS category_name,
                 b.name AS brand_name,
                 CONCAT(
@@ -230,19 +369,17 @@ class Product {
         }
     }
 
-
-
-    // 🟢 1️⃣ Cập nhật thông tin sản phẩm chính
-    static async updateProduct(productId, { name, description, base_price, category_id, brand_id, sku, weight, is_active }) {
+    // 🟢 1 Cập nhật thông tin sản phẩm chính
+    static async updateProduct(productId, { name, description, base_price, category_id, brand_id, sku, weight, is_active, sale }) {
         await pool.query(
             `UPDATE Products 
-             SET name=?, description=?, base_price=?, category_id=?, brand_id=?, sku=?, weight=?, is_active=?, updated_at=NOW() 
+             SET name=?, description=?, base_price=?, category_id=?, brand_id=?, sku=?, weight=?, is_active=?, sale=?, updated_at=NOW() 
              WHERE product_id=?`,
-            [name, description, base_price, category_id, brand_id, sku, weight, is_active, productId]
+            [name, description, base_price, category_id, brand_id, sku, weight, is_active, sale, productId]
         );
     }
 
-    // 🟢 2️⃣ Cập nhật biến thể & ảnh (xóa cũ → thêm lại)
+    // 🟢 2 Cập nhật biến thể & ảnh (xóa cũ → thêm lại)
     static async updateVariantById(variantId, data) {
         const conn = await pool.getConnection();
         try {
@@ -287,16 +424,7 @@ class Product {
         }
     }
 
-
-
-
-
-
-
-
-    // ==========================================================
-    // 🔴 Xoá sản phẩm
-    // ==========================================================
+    //  Xoá sản phẩm
     static async delete(productId) {
         const conn = await pool.getConnection();
         try {
@@ -324,9 +452,7 @@ class Product {
         }
     }
 
-    // ==========================================================
-    // 🔻 Xoá từng biến thể riêng
-    // ==========================================================
+    //  Xoá từng biến thể riêng
     static async deleteVariant(variantId) {
         const conn = await pool.getConnection();
         try {

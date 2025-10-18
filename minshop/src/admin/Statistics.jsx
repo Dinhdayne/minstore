@@ -30,11 +30,32 @@ const AdminReports = () => {
                 end: endDate || "",
             });
 
+            const token = localStorage.getItem("token");
             const [revRes, prodRes, cusRes, retRes] = await Promise.all([
-                fetch(`http://localhost:3000/api/statistics/revenue?${queryParams}`),
-                fetch(`http://localhost:3000/api/statistics/top-products?days=${productDays}`),
-                fetch("http://localhost:3000/api/statistics/customers"),
-                fetch("http://localhost:3000/api/statistics/returns"),
+                fetch(`http://localhost:3000/api/statistics/revenue?${queryParams}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+                fetch(`http://localhost:3000/api/statistics/top-products?days=${productDays}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+                fetch("http://localhost:3000/api/statistics/customers", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+                fetch("http://localhost:3000/api/statistics/returns", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
             ]);
 
             const [revData, prodData, cusData, retData] = await Promise.all([

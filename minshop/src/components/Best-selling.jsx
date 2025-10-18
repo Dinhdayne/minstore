@@ -3,7 +3,7 @@ import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import util from "../utils/util";
 import { addToCartItem } from "../include/api";
-import "../App.css";
+import "./Best.css";
 
 const Products = ({ products = [], error }) => {
     const { addToCartItem: addToCartContext } = useCart();
@@ -135,7 +135,7 @@ const Products = ({ products = [], error }) => {
             <section className="products">
                 <div className="container">
                     <div className="products-header">
-                        <h2>SẢN PHẨM KHUYẾN MÃI</h2>
+                        <h2>SẢN PHẨM BÁN CHẠY</h2>
                     </div>
                     <p className="error">{error}</p>
                 </div>
@@ -144,10 +144,10 @@ const Products = ({ products = [], error }) => {
     }
 
     return (
-        <section className="products">
+        <section className="products1">
             <div className="container">
                 <div className="products-header">
-                    <h2>SẢN PHẨM KHUYẾN MÃI</h2>
+                    <h2>SẢN PHẨM BÁN CHẠY</h2>
                     <div className="arrowp">
                         <button onClick={() => scroll("prev")}>&#10094;</button>
                         <button onClick={() => scroll("next")}>&#10095;</button>
@@ -183,6 +183,7 @@ const Products = ({ products = [], error }) => {
                             });
 
                             const originalPrice = product.base_price;
+
                             const discountPercentage = product.sale;
                             const discountedPrice = originalPrice * (1 - discountPercentage / 100);
 
@@ -251,10 +252,13 @@ const Products = ({ products = [], error }) => {
 
                                     <div className="price">
                                         {discountedPrice.toLocaleString("vi-VN")}đ
-                                        <span className="original-price">{originalPrice.toLocaleString("vi-VN")}đ</span>
+                                        {
+                                            discountPercentage > 0 && (<span className="original-price">{originalPrice.toLocaleString("vi-VN")}đ</span>)
+                                        }
+
                                     </div>
 
-                                    <div className="details">{Object.keys(colors).length} Màu sắc</div>
+                                    <div className="details">{product.total_sold} Lượt mua</div>
 
                                     <div className="buttons">
                                         <button
@@ -278,7 +282,7 @@ const Products = ({ products = [], error }) => {
                 </div>
             </div>
             <div className="btt">
-                <button className="view-full-sale">Xem tất cả sản phẩm khuyến mãi</button>
+                <button className="view-full-sale">Xem tất cả sản phẩm bán chạy</button>
             </div>
         </section>
     );

@@ -121,7 +121,7 @@ const googleLogin = async (req, res) => {
 
         //Tạo JWT token cho user
         const jwtToken = generateToken(user);
-
+        console.log("res BE gửi:", user);
         return res.json({
             message: "Google login success",
             token: jwtToken,

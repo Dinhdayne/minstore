@@ -21,7 +21,13 @@ const AdminPurchases = () => {
     const fetchPurchases = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:3000/api/purchases");
+            const token = localStorage.getItem("token");
+            const res = await fetch("http://localhost:3000/api/purchases", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const data = await res.json();
             setPurchases(data);
         } catch (err) {
@@ -38,7 +44,7 @@ const AdminPurchases = () => {
     };
 
     const fetchVariants = async () => {
-        const res = await fetch("http://localhost:3000/api/variants"); // API này BE đã có rồi
+        const res = await fetch("http://localhost:3000/api/variants");
         const data = await res.json();
         setVariants(data);
     };
@@ -46,7 +52,13 @@ const AdminPurchases = () => {
     // 🔹 Xem chi tiết
     const fetchPurchaseDetail = async (id) => {
         try {
-            const res = await fetch(`http://localhost:3000/api/purchases/${id}`);
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:3000/api/purchases/${id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const data = await res.json();
             setSelectedPurchase(data);
         } catch (err) {
@@ -57,9 +69,13 @@ const AdminPurchases = () => {
     // 🔹 Tạo mới đơn nhập hàng
     const createPurchase = async () => {
         try {
+            const token = localStorage.getItem("token");
             const res = await fetch("http://localhost:3000/api/purchases", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
                 body: JSON.stringify(formData),
             });
             if (!res.ok) throw new Error("Tạo đơn nhập thất bại");
@@ -75,9 +91,13 @@ const AdminPurchases = () => {
     // 🔹 Cập nhật trạng thái đơn nhập
     const updateStatus = async (id, newStatus) => {
         try {
+            const token = localStorage.getItem("token");
             await fetch(`http://localhost:3000/api/purchases/${id}/status`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
                 body: JSON.stringify({ status: newStatus }),
             });
             fetchPurchases();

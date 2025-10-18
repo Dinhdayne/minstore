@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./AccountPage.css"; // import CSS này nhé
+import { useNavigate } from "react-router-dom";
+import "./AccountPage.css";
 import AdminProducts from "./admin/AdminProducts";
 import AdminUsers from "./admin/AdminUsers";
 import AdminCategories from "./admin/AdminCategories";
@@ -11,7 +12,18 @@ import AdminSuppliers from "./admin/AdminSuppliers";
 
 const AccountPage = () => {
     const [activeTab, setActiveTab] = useState("Products");
+    const navigate = useNavigate(); // ⬅️ khởi tạo hook điều hướng
 
+    // 🧩 Kiểm tra quyền truy cập
+    useEffect(() => {
+        const role = localStorage.getItem("role");
+
+        // Nếu chưa đăng nhập hoặc không phải admin → chặn truy cập
+        if (!role || role.toLowerCase() !== "admin") {
+            alert("Bạn không có quyền truy cập trang này!");
+            navigate("/"); // chuyển về trang chủ hoặc login
+        }
+    }, [navigate]);
     const menuItems = [
         "Products",
         "Categories",

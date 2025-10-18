@@ -409,7 +409,9 @@ const AdminProducts = () => {
                             <option value="1">Hoạt động</option>
                             <option value="0">Ngừng kinh doanh</option>
                         </select>
-
+                        <input placeholder="Sale"
+                            value={selectedProduct.sale}
+                            onChange={(e) => setSelectedProduct({ ...selectedProduct, sale: e.target.value })} />
 
                         <div className="form-actions">
                             <button className="btn-save" onClick={handleUpdateProduct}>Lưu thay đổi</button>
@@ -434,6 +436,7 @@ const AdminProducts = () => {
                         <th>Thương hiệu</th>
                         <th>Giá cơ bản</th>
                         <th>Trạng thái</th>
+                        <th>Sale</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -465,6 +468,7 @@ const AdminProducts = () => {
                                             <span className="status-inactive">Ngừng</span>
                                         )}
                                     </td>
+                                    <td>{p.sale}</td>
                                     <td>
                                         <button
                                             className="btn-edit"

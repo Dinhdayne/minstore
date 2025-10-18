@@ -121,7 +121,7 @@ const Header = () => {
                                     <div className="account-menu">
                                         <p className="menu-title">THÔNG TIN TÀI KHOẢN</p>
                                         <p className="account-name">
-                                            {customer?.display_name || customer?.full_name || customer?.email || "Người dùng"}
+                                            {customer?.display_name || customer?.name || customer?.email || "Người dùng"}
                                         </p>
                                         <hr className="menu-divider" />
                                         <ul>

@@ -13,6 +13,50 @@ const getProducts = async (req, res) => {
     }
 };
 
+const getProductsOnSale = async (req, res) => {
+    try {
+        const products = await Product.findAllSale();
+        products.forEach(p => {
+            p.variants = JSON.parse(p.variants);
+            p.images = JSON.parse(p.images);
+        });
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+};
+
+const getTopProducts = async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10; // mặc định 10 sản phẩm
+        const days = parseInt(req.query.days) || 7;   // mặc định 7 ngày gần nhất
+
+        // 🔹 Lấy danh sách top sản phẩm bán chạy từ model
+        const products = await Product.findAlltopProduct(limit, days);
+
+        // 🔹 Parse JSON nếu có cột variants / images
+        products.forEach(p => {
+            try {
+                if (p.variants && typeof p.variants === "string") {
+                    p.variants = JSON.parse(p.variants);
+                }
+                if (p.images && typeof p.images === "string") {
+                    p.images = JSON.parse(p.images);
+                }
+            } catch (e) {
+                console.warn(`Lỗi parse JSON cho product_id ${p.product_id}:`, e.message);
+                p.variants = [];
+                p.images = [];
+            }
+        });
+
+        res.status(200).json(products);
+    } catch (error) {
+        console.error("Lỗi khi lấy top sản phẩm bán chạy:", error);
+        res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
+};
+
 const getVariants = async (req, res) => {
     try {
         const variants = await Product.findVariants();
@@ -131,4 +175,4 @@ const deleteVariants = async (req, res) => {
     }
 };
 
-module.exports = { getProducts, getProductsByCategory, getProductById, createProducts, updateProducts, deleteProduct, createVariantsAndImages, updateVariantById, deleteVariants, getVariants };
+module.exports = { getProducts, getProductsOnSale, getTopProducts, getProductsByCategory, getProductById, createProducts, updateProducts, deleteProduct, createVariantsAndImages, updateVariantById, deleteVariants, getVariants };
