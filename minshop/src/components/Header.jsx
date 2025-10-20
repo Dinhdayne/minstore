@@ -64,7 +64,7 @@ const Header = () => {
 
                     {/* Logo */}
                     <a href="/" className="logo">
-                        <img src="images/logo2.png" alt="Minshop Logo" />
+                        <img src="/images/logo2.png" alt="Minshop Logo" />
                     </a>
 
                     {/* Menu desktop */}
@@ -103,7 +103,7 @@ const Header = () => {
                             onClick={() => setShowSearchBar(!showSearchBar)}
                         >
                             <img
-                                src={isAuthenticated ? "images/search1.png" : "images/search.png"}
+                                src={isAuthenticated ? "/images/search1.png" : "/images/search.png"}
                                 alt="Tìm kiếm"
                             />
                         </a>
@@ -114,7 +114,7 @@ const Header = () => {
                                 onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
                             >
                                 <div className="account-icon">
-                                    <img src="images/check.png" alt="Tài khoản" />
+                                    <img src="/images/check.png" alt="Tài khoản" />
                                 </div>
 
                                 {isAccountMenuOpen && (
@@ -125,21 +125,21 @@ const Header = () => {
                                         </p>
                                         <hr className="menu-divider" />
                                         <ul>
-                                            <li><a href={isAuthenticated ? "./AccountPage" : "./Login"}>Tài khoản của tôi</a></li>
+                                            <li><a href={isAuthenticated ? "/AccountPage" : "/Login"}>Tài khoản của tôi</a></li>
                                             <li><a href="/" onClick={logout}>Đăng xuất</a></li>
                                         </ul>
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <a href="./Login">
-                                <img src="images/user1.png" alt="Đăng nhập" />
+                            <a href="/Login">
+                                <img src="/images/user1.png" alt="Đăng nhập" />
                             </a>
                         )}
 
-                        <a href={isAuthenticated ? "./CartPage" : "./Login"}>
+                        <a href={isAuthenticated ? "/CartPage" : "/Login"}>
                             <img
-                                src={isAuthenticated ? "images/bag1.png" : "images/bag.png"}
+                                src={isAuthenticated ? "/images/bag1.png" : "images/bag.png"}
                                 alt="Giỏ hàng"
                             />
                         </a>

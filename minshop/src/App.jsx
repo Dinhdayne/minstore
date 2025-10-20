@@ -15,6 +15,7 @@ import CartPage from "./CartPage";
 import AccountPage from "./AccountPage";
 import AdminPage from "./AdminPage";
 import ProductDetail from "./ProductDetail";
+import CategoryPage from "./CategoryPage";
 
 import { getProducts, getCategories, getProductTOP, getProductSale } from "./include/api";
 
@@ -81,7 +82,8 @@ function App() {
             <Route path="/CartPage" element={<CartPage />} />
             <Route path="/AccountPage" element={<AccountPage />} />
             <Route path="/AdminPage" element={<AdminPage />} />
-            <Route path="/:id" element={<ProductDetail />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/category/:categoryId" element={<CategoryPage />} />
           </Routes>
           <Footer />
         </Router>

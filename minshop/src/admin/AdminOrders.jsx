@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./AdminPage.css";
+import { io, Socket } from "socket.io-client";
+import { toast, ToastContainer } from "react-toastify";
+
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -8,6 +11,7 @@ const AdminOrders = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState(null);
     const [updating, setUpdating] = useState(false);
+    const [orderSocket, setOrderSocket] = useState(null);
 
     // 🟦 Lấy danh sách tất cả đơn hàng
     const fetchOrders = async () => {
@@ -110,6 +114,42 @@ const AdminOrders = () => {
     useEffect(() => {
         fetchOrders();
     }, []);
+    useEffect(() => {
+        // Kết nối tới socket server
+        const socket = io("http://localhost:3000", {
+            transports: ["websocket"], // giúp kết nối ổn định hơn
+        });
+
+        socket.on("connect", () => {
+            console.log("🟢 Socket connected:", socket.id);
+        });
+
+        // Lắng nghe sự kiện đơn hàng mới từ server
+        socket.on("newOrder", (order) => {
+            console.log("📦 Có đơn hàng mới:", order);
+
+            // ✅ Thông báo realtime
+            toast.success(`🛒 Đơn hàng mới #${order.order_id}`, {
+                position: "top-right",
+                autoClose: 4000,
+                theme: "colored",
+            });
+
+            // ✅ Thêm vào danh sách đơn hàng (nếu bạn muốn realtime cập nhật)
+            setOrders((prev) => [order, ...prev]);
+        });
+
+        socket.on("disconnect", () => {
+            console.log("🔴 Socket disconnected");
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
+
+
 
     return (
         <div className="admin-page">

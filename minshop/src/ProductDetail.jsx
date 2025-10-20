@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./ProductDetail.css";
+import { addToCartItem } from "./include/api";
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -10,6 +11,8 @@ const ProductDetail = () => {
     const [selectedColor, setSelectedColor] = useState("");
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedImage, setSelectedImage] = useState("");
+
+    const [selectedVariants, setSelectedVariants] = useState({});
     const [quantity, setQuantity] = useState(1);
 
     // Parse an toàn
@@ -79,38 +82,31 @@ const ProductDetail = () => {
         return attr.color === selectedColor && attr.size === selectedSize;
     });
 
-    // Thêm vào giỏ
-    const handleAddToCart = () => {
-        if (!selectedColor || !selectedSize) {
-            alert("Vui lòng chọn màu và size!");
+    const handleAddToCart = async () => {
+        const variant = selectedVariant;
+        if (!variant) {
+            alert("Vui lòng chọn màu và kích thước trước khi thêm vào giỏ!");
             return;
         }
 
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const newItem = {
-            product_id: product.product_id,
-            name: product.name,
-            price: selectedVariant.price,
-            sku: selectedVariant.sku,
-            image: selectedImage,
-            color: selectedColor,
-            size: selectedSize,
-            quantity,
-        };
+        const isAuthenticated = !!localStorage.getItem("token");
+        if (!isAuthenticated) {
+            alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+            return;
+        }
 
-        const existing = cart.find(
-            (item) =>
-                item.sku === newItem.sku &&
-                item.size === newItem.size &&
-                item.color === newItem.color
-        );
-
-        if (existing) existing.quantity += quantity;
-        else cart.push(newItem);
-
-        localStorage.setItem("cart", JSON.stringify(cart));
-        alert("Đã thêm vào giỏ hàng!");
+        try {
+            const response = await addToCartItem(variant.variant_id, quantity);
+            if (response && !response.error) {
+                alert("🛒 Đã thêm vào giỏ hàng thành công!");
+            } else {
+                alert("❌ Thêm giỏ hàng thất bại: " + (response?.error || "Không rõ nguyên nhân"));
+            }
+        } catch (err) {
+            alert("⚠️ Lỗi khi thêm vào giỏ hàng: " + err.message);
+        }
     };
+
     // Lọc ảnh trùng nhau theo image_url
     const uniqueImages = images.filter(
         (img, index, self) =>
@@ -118,7 +114,9 @@ const ProductDetail = () => {
     );
 
     if (!product) return <div>Đang tải...</div>;
-
+    const originalPrice = product.base_price;
+    const discountPercentage = parseFloat(product.sale);
+    const discountedPrice = originalPrice * (1 - discountPercentage / 100);
     return (
         <div className="product-detail-container">
             {/* Cột trái: ảnh */}
@@ -155,12 +153,14 @@ const ProductDetail = () => {
                 {/* Giá */}
                 <div className="price-box">
                     <span className="new-price">
-                        {(selectedVariant?.price || product.base_price).toLocaleString()}₫
+                        {(discountedPrice).toLocaleString()}₫
                     </span>
-                    <span className="old-price">
-                        {product.old_price ? product.old_price.toLocaleString() + "₫" : ""}
-                    </span>
-                    <span className="discount">-34%</span>
+                    {discountPercentage > 0 && <span className="old-price">
+                        {originalPrice ? originalPrice.toLocaleString() + "₫" : ""}
+                    </span>}
+
+                    {discountPercentage > 0 && <span className="discount">-{discountPercentage}%</span>}
+
                 </div>
 
                 {/* Màu sắc */}
@@ -217,7 +217,10 @@ const ProductDetail = () => {
 
                 {/* Nút hành động */}
                 <div className="action-buttons">
-                    <button className="add-cart" onClick={handleAddToCart}>
+                    <button
+                        className="add-cart"
+                        onClick={() => handleAddToCart(product.product_id)}
+                    >
                         🛒 Thêm vào giỏ
                     </button>
                 </div>

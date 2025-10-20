@@ -1,10 +1,11 @@
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../App.css";
 
 const Categories = ({ categories, error }) => {
     const sliderRef = useRef(null);
     const [index, setIndex] = useState(0);
-
+    const navigate = useNavigate();
     const scroll = (direction) => {
         const cardWidth = sliderRef.current.querySelector(".category-card").offsetWidth;
         const visibleCards = 4;
@@ -40,12 +41,18 @@ const Categories = ({ categories, error }) => {
                         <div className="category-grid" ref={sliderRef}>
                             {categories.map((category) => (
                                 category.is_active === 1 ? (
-                                    <div key={category.category_id} className="category-card">
+                                    <div
+                                        key={category.category_id}
+                                        className="category-card"
+                                        onClick={() => navigate(`/category/${category.category_id}`)}
+                                        style={{ cursor: "pointer" }}
+                                    >
                                         <img src={category.image_url} alt={category.name} />
                                         <div className="overlay">
                                             <h3>{category.name}</h3>
                                         </div>
                                     </div>
+
                                 )
                                     : null
                             ))}

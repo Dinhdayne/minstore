@@ -101,7 +101,7 @@ const Products = ({ products = [], error }) => {
     };
 
     const handleViewDetails = (productId) => {
-        window.location.href = `/${productId}`;
+        window.location.href = `./product/${productId}`;
     };
 
     const handleColorChange = (productId, image, variantId) => {
@@ -183,7 +183,7 @@ const Products = ({ products = [], error }) => {
                             });
 
                             const originalPrice = product.base_price;
-                            const discountPercentage = product.sale;
+                            const discountPercentage = parseFloat(product.sale);
                             const discountedPrice = originalPrice * (1 - discountPercentage / 100);
 
                             // determine which variant is currently selected

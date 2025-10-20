@@ -6,12 +6,9 @@ import { addToCartItem } from "../include/api";
 import "./Best.css";
 
 const Products = ({ products = [], error }) => {
-    const { addToCartItem: addToCartContext } = useCart();
     const { user, isAuthenticated } = useAuth();
     const [selectedVariants, setSelectedVariants] = useState({});
     const [selectedImages, setSelectedImages] = useState({});
-    const [selectedColor, setSelectedColor] = useState(null);
-    const [selectedSize, setSelectedSize] = useState(null);
     const sliderRef = useRef(null);
     const [index, setIndex] = useState(0);
 
@@ -101,7 +98,7 @@ const Products = ({ products = [], error }) => {
     };
 
     const handleViewDetails = (productId) => {
-        window.location.href = `/${productId}`;
+        window.location.href = `./product/${productId}`;
     };
 
     const handleColorChange = (productId, image, variantId) => {
@@ -184,7 +181,7 @@ const Products = ({ products = [], error }) => {
 
                             const originalPrice = product.base_price;
 
-                            const discountPercentage = product.sale;
+                            const discountPercentage = parseFloat(product.sale);
                             const discountedPrice = originalPrice * (1 - discountPercentage / 100);
 
                             // determine which variant is currently selected

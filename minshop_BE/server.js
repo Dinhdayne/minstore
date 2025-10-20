@@ -1,6 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const http = require('http');
+const { initSocket } = require('./socket');
+
+
+//require routes
 const accountRoutes = require('./routes/accountRoutes');
 const userRoutes = require('./routes/userRoutes');
 const customerRoutes = require('./routes/customerRoutes');
@@ -23,6 +28,17 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(cors(
+    {
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    }
+));
+app.use(express.json());
+// Tạo server HTTP để Socket.io có thể attach vào
+const server = http.createServer(app);
+// Khởi tạo Socket.io
+initSocket(server);
 
 // Routes
 app.use('/api', accountRoutes);
@@ -71,5 +87,10 @@ app.post("/auth/google", async (req, res) => {
         });
     }
 });
+
+
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server chạy trên port ${PORT}`));
+server.listen(PORT, () => {
+    console.log(`✅ Server + Socket.IO đang chạy trên port ${PORT}`);
+});

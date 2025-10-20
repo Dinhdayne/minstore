@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 import "./AccountPage.css";
 import AdminProducts from "./admin/AdminProducts";
 import AdminUsers from "./admin/AdminUsers";
@@ -12,6 +13,8 @@ import AdminSuppliers from "./admin/AdminSuppliers";
 
 const AccountPage = () => {
     const [activeTab, setActiveTab] = useState("Products");
+    const [newOrderCount, setNewOrderCount] = useState(0); // 🔥 thêm
+    const [showNotification, setShowNotification] = useState(false); // 🔥 thêm
     const navigate = useNavigate(); // ⬅️ khởi tạo hook điều hướng
 
     // 🧩 Kiểm tra quyền truy cập
@@ -24,6 +27,28 @@ const AccountPage = () => {
             navigate("/"); // chuyển về trang chủ hoặc login
         }
     }, [navigate]);
+    // 🧠 Kết nối socket.io để nhận đơn hàng mới
+    useEffect(() => {
+        const socket = io("http://localhost:3000"); // 🔥 kết nối server
+
+        socket.on("connect", () => {
+            console.log("✅ Kết nối socket:", socket.id);
+        });
+
+        socket.on("newOrder", (order) => {
+            console.log("📦 Có đơn hàng mới:", order);
+
+            setNewOrderCount((prev) => prev + 1);
+            setShowNotification(true);
+
+            // Tự ẩn thông báo sau 4 giây
+            setTimeout(() => setShowNotification(false), 4000);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
     const menuItems = [
         "Products",
         "Categories",
@@ -89,6 +114,8 @@ const AccountPage = () => {
                 return <AdminUsers />;
 
             case "Orders":
+                // reset badge khi admin click vào Orders
+                if (newOrderCount > 0) setNewOrderCount(0);
                 return <AdminOrders />;
 
             case "Purchases":
@@ -130,16 +157,26 @@ const AccountPage = () => {
                     <button
                         key={item}
                         onClick={() => setActiveTab(item)}
-                        className={`sidebar-item ${activeTab === item ? "active" : ""
-                            }`}
+                        className={`sidebar-item ${activeTab === item ? "active" : ""}`}
                     >
                         <span>{item}</span>
+
+                        {/* 🔥 Nếu là tab Orders và có đơn hàng mới thì hiển thị badge */}
+                        {item === "Orders" && newOrderCount > 0 && (
+                            <span className="order-badge">{newOrderCount}</span>
+                        )}
                     </button>
                 ))}
             </div>
 
             {/* Nội dung phải */}
             <div className="account-content">{renderContent()}</div>
+            {/* Thông báo đơn hàng mới */}
+            {showNotification && (
+                <div className="realtime-toast">
+                    🔔 Có đơn hàng mới vừa được tạo!
+                </div>
+            )}
         </div>
     );
 };

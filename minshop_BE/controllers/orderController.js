@@ -1,4 +1,7 @@
 const OrderModel = require("../models/orderModel");
+const { notifyNewOrder } = require("../socket");
+
+let io;
 
 const OrderController = {
     // ✅ Tạo đơn hàng mới
@@ -21,8 +24,22 @@ const OrderController = {
             });
 
             res.status(201).json({
+
                 message: "Đặt hàng thành công!",
                 order_id: result.order_id,
+            });
+
+            if (io) {
+                io.emit("new_order", {
+                    user_id,
+                    order_id: result.order_id,
+                    total_amount,
+                });
+            }
+            notifyNewOrder({
+                user_id,
+                order_id: result.order_id,
+                total_amount,
             });
         } catch (error) {
             res.status(500).json({ message: "Lỗi khi tạo đơn hàng", error: error.message });

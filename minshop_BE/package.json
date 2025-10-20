@@ -15,7 +15,8 @@
     "express": "^4.21.2",
     "google-auth-library": "^10.4.0",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.15.1"
+    "mysql2": "^3.15.1",
+    "socket.io": "^4.8.1"
   },
   "keywords": [],
   "author": "",

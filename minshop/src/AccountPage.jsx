@@ -296,7 +296,15 @@ const AccountPage = () => {
         if (!user?.user_id) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/api/orders/user/${user.user_id}`);
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:3000/api/orders/user/${user.user_id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+
+            });
             const data = await res.json();
             if (res.ok) {
                 setOrders(data);
