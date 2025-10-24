@@ -69,7 +69,7 @@ const getVariants = async (req, res) => {
 const getProductById = async (req, res) => {
     try {
         const id = req.params.id; // Lấy id từ URL, ví dụ: /products/:id
-        console.log('Fetching product for id:', id); // Debug
+        //console.log('Fetching product for id:', id); // Debug
         const product = await Product.findById(id);
 
         if (!product) {
@@ -80,7 +80,7 @@ const getProductById = async (req, res) => {
         //     p.variants = JSON.parse(p.variants);
         //     p.images = JSON.parse(p.images);
         // });
-        console.log('Product found:', product);
+        //console.log('Product found:', product);
         res.json(product);
     } catch (error) {
         console.error('Error in getProductById:', error);

@@ -10,6 +10,7 @@ const {
     clearCart
 } = require('../models/CartItem');
 const pool = require("../config/db");
+const { notifyNewCartItem } = require("../socket");
 
 const getVariant = async (req, res) => {
     try {
@@ -70,13 +71,26 @@ const addToCart = async (req, res) => {
         // 🔹 Thêm hoặc cập nhật sản phẩm trong cart_items
         await pool.query(
             `INSERT INTO cart_items (cart_id, variant_id, quantity)
-       VALUES (?, ?, ?)
-       ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)`,
+                VALUES (?, ?, ?)
+                ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)`,
             [cartId, variantId, quantity]
         );
+        const [[cartItem]] = await pool.query(
+            `SELECT ci.cart_item_id AS item_id, ci.variant_id, ci.quantity
+             FROM cart_items ci 
+             WHERE ci.cart_id = ? AND ci.variant_id = ?`,
+            [cartId, variantId]
+        );
 
+        // 🟢 Gửi realtime CHỈ CHO USER NÀY
+        notifyNewCartItem(userId, cartItem);
+
+        res.json({
+            message: "Thêm vào giỏ hàng thành công",
+            cartItem,
+        });
         // ✅ Gửi response một lần duy nhất
-        return res.json({ message: "Thêm vào giỏ hàng thành công", cartId });
+        //        return res.json({ message: "Thêm vào giỏ hàng thành công", cartId });
 
     } catch (error) {
         console.error("Lỗi khi thêm giỏ hàng:", error);

@@ -6,6 +6,15 @@ const CartPage = ({ userId = user.user_id }) => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem("token");
+    // 🧾 Mã giảm giá
+    const [coupons, setCoupons] = useState([]);
+    const [selectedCouponId, setSelectedCouponId] = useState(null);
+    const [discountAmount, setDiscountAmount] = useState(0);
+
+    // 💳 Phương thức thanh toán
+    const [paymentMethod, setPaymentMethod] = useState("cod");
+    const [status_Pay, setStatusPay] = useState("pending");
+
     // const [selectedColor, setSelectedColor] = useState(initialColor);
     // const [selectedSize, setSelectedSize] = useState(initialSize);
 
@@ -80,6 +89,36 @@ const CartPage = ({ userId = user.user_id }) => {
         };
         fetchCart();
     }, [userId, token]);
+
+    // 🧾 Lấy danh sách coupon còn hiệu lực
+    useEffect(() => {
+        const fetchCoupons = async () => {
+            try {
+                const res = await fetch("http://localhost:3000/api/coupons", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!res.ok) throw new Error("Không thể tải coupon");
+                const data = await res.json();
+
+                // 🔹 Lọc chỉ lấy mã còn hiệu lực
+                const now = new Date();
+                const validCoupons = data.filter((c) => {
+                    const notExpired = !c.expiry_date || new Date(c.expiry_date) > now;
+                    const hasUses = c.max_uses === null || c.uses_count < c.max_uses;
+                    const isActive = c.is_active === 1 || c.is_active === true;
+                    return notExpired && hasUses && isActive;
+                });
+
+                setCoupons(validCoupons);
+            } catch (err) {
+                console.error("Lỗi tải coupon:", err);
+            }
+        };
+        fetchCoupons();
+    }, [token]);
+
+
+
 
     // 🟢 Cập nhật số lượng
     const updateQuantity = async (cartItemId, delta) => {
@@ -166,6 +205,37 @@ const CartPage = ({ userId = user.user_id }) => {
         (sum, item) => sum + parseFloat(item.price) * item.quantity,
         0
     );
+    const finalPrice = Math.max(0, totalPrice - discountAmount);
+    // 🧮 Tính giảm giá khi chọn coupon
+    useEffect(() => {
+        if (!selectedCouponId) {
+            setDiscountAmount(0);
+            return;
+        }
+
+        const coupon = coupons.find((c) => c.coupon_id === Number(selectedCouponId));
+        if (!coupon) {
+            setDiscountAmount(0);
+            return;
+        }
+
+        if (coupon.min_order_amount && totalPrice < coupon.min_order_amount) {
+            alert(`Đơn hàng phải tối thiểu ${coupon.min_order_amount.toLocaleString()}₫ để áp dụng mã này.`);
+            setSelectedCouponId(null);
+            setDiscountAmount(0);
+            return;
+        }
+
+        let discount = 0;
+        if (coupon.discount_type === "percentage") {
+            discount = (totalPrice * coupon.discount_value) / 100;
+        } else {
+            discount = coupon.discount_value;
+        }
+
+        // Không giảm quá tổng tiền
+        setDiscountAmount(Math.min(discount, totalPrice));
+    }, [selectedCouponId, coupons, totalPrice]);
     // 🟢 Hàm xử lý đặt hàng
     const handlePlaceOrder = async () => {
         if (!selectedAddressId) {
@@ -184,9 +254,12 @@ const CartPage = ({ userId = user.user_id }) => {
             const orderData = {
                 user_id: userId,
                 address_id: selectedAddressId,
-                total_amount: totalPrice,
+                total_amount: finalPrice || totalPrice,
                 shipping_fee: 0,
-                discount_amount: 0,
+                discount_amount: discountAmount,
+                coupon_code: selectedCouponId?.code || null,
+                payment_method: paymentMethod || "cod",
+                status_Pay: status_Pay || "pending",
                 notes: document.querySelector(".shipping-form textarea")?.value || "",
                 items: items.map((item) => ({
                     variant_id: item.variant_id,
@@ -194,6 +267,7 @@ const CartPage = ({ userId = user.user_id }) => {
                     price: item.price,
                 })),
             };
+
 
             const res = await fetch("http://localhost:3000/api/orders/create", {
                 method: "POST",
@@ -204,11 +278,71 @@ const CartPage = ({ userId = user.user_id }) => {
                 body: JSON.stringify(orderData),
             });
 
-            const data = await res.json();
+            const data = await res.json(); // ✅ đặt ở đây trước khi dùng ở dưới
+
+            if (!res.ok) throw new Error(data.message || "Đặt hàng thất bại");
+
+            console.log("✅ Đơn hàng đã được tạo:", data.order_id);
+
+            // 🟣 2. Nếu là thanh toán Momo
+            if (paymentMethod === "momo") {
+                const momoRes = await fetch("http://localhost:3000/api/orders/payment/momo", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        order_id: data.order_id,
+                        amount: finalPrice || totalPrice,
+                        orderInfo: `Thanh toán đơn ${data.order_id}`,
+                    }),
+                });
+                console.log("🔗 MoMo full response:", momoRes.data);
+
+                const momoData = await momoRes.json();
+
+                if (momoData.payUrl) {
+                    // ✅ Chuyển người dùng sang trang thanh toán Momo
+                    window.location.href = momoData.payUrl;
+                    return;
+                } else {
+                    alert("❌ Không tạo được link thanh toán Momo.");
+                    console.error("Lỗi Momo:", momoData);
+                }
+            }
+
+            // 🟡 3. Nếu là COD thì hiển thị thành công ngay
+            if (paymentMethod === "cod") {
+                alert("✅ Đặt hàng thành công!");
+            }
 
             if (!res.ok) throw new Error(data.message || "Đặt hàng thất bại");
 
             alert("✅ Đặt hàng thành công!");
+
+
+
+            console.log(status_Pay);
+
+            if (selectedCouponId) {
+                const orderCoupon = {
+                    order_id: data.order_id,
+                    coupon_id: selectedCouponId,
+                };
+
+                const rescp = await fetch("http://localhost:3000/api/order-coupons", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(orderCoupon),
+                });
+
+                const cpData = await rescp.json();
+                if (!rescp.ok) console.error("⚠️ Gắn coupon thất bại:", cpData.message);
+            }
             // Xóa giỏ hàng sau khi đặt
             // setItems([]);
             // setCart(null);
@@ -252,15 +386,65 @@ const CartPage = ({ userId = user.user_id }) => {
 
                 <form className="shipping-form">
                     <div className="form-row">
-                        <select>
-                            <option>Anh/Chị</option>
-                        </select>
-                        <input type="text" placeholder="Nhập họ tên của bạn" />
-                        <input type="text" placeholder="Nhập số điện thoại của bạn" />
                     </div>
-                    <input type="email" placeholder="Nhập email của bạn" />
                     <textarea placeholder="Nhập ghi chú"></textarea>
                 </form>
+                {/* --- chọn mã giảm giá --- */}
+                <div className="coupon-section">
+                    <h3>Mã giảm giá</h3>
+                    {coupons.length > 0 ? (
+                        <select
+                            value={selectedCouponId || ""}
+                            onChange={(e) => setSelectedCouponId(e.target.value || null)}
+                        >
+                            <option value="">-- Chọn mã giảm giá --</option>
+                            {coupons.map((c) => (
+                                <option key={c.coupon_id} value={c.coupon_id}>
+                                    {c.code} -{" "}
+                                    {c.discount_type === "percentage"
+                                        ? `${c.discount_value}%`
+                                        : `${c.discount_value.toLocaleString()}₫`}
+                                    {c.expiry_date ? ` (HSD: ${new Date(c.expiry_date).toLocaleDateString("vi-VN")})` : ""}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <p>Không có mã giảm giá khả dụng.</p>
+                    )}
+                </div>
+
+                {/* --- chọn phương thức thanh toán --- */}
+                <div className="payment-method-section">
+                    <h3>Phương thức thanh toán</h3>
+                    <label>
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="cod"
+                            checked={paymentMethod === "cod"}
+                            onChange={(e) => {
+                                setPaymentMethod(e.target.value);
+                                setStatusPay("pending"); // COD thì pending
+                            }}
+                        />
+                        Thanh toán khi nhận hàng (COD)
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="momo"
+                            checked={paymentMethod === "momo"}
+                            onChange={(e) => {
+                                setPaymentMethod(e.target.value);
+                                setStatusPay("pending"); // Momo thì paid
+                            }}
+                        />
+                        Thanh toán qua Momo
+                    </label>
+
+                </div>
             </div>
 
 
@@ -415,10 +599,21 @@ const CartPage = ({ userId = user.user_id }) => {
                         })}
 
                         <div className="cart-summary">
-                            <p>
-                                <strong>Tổng cộng:</strong>{" "}
-                                <span className="total">{totalPrice.toLocaleString()}₫</span>
-                            </p>
+                            <div className="cart-summary-details">
+                                <p>
+                                    <strong>Tạm tính:</strong> {totalPrice.toLocaleString()}₫
+                                </p>
+                                {discountAmount > 0 && (
+                                    <p className="discount-line">
+                                        <strong>Giảm giá:</strong> -{discountAmount.toLocaleString()}₫
+                                    </p>
+                                )}
+                                <p className="final-total">
+                                    <strong>Tổng thanh toán:</strong>{" "}
+                                    <span className="total">{finalPrice.toLocaleString()}₫</span>
+                                </p>
+                            </div>
+
                             <button className="checkout-btn" onClick={handlePlaceOrder}>
                                 Đặt hàng
                             </button>

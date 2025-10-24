@@ -29,4 +29,13 @@ router.get("/orders/user/:user_id", authenticateToken, OrderController.getByUser
 router.get("/orders/:order_id", authenticateToken, OrderController.getDetail);
 
 router.put("/orders/:order_id/status", authenticateToken, OrderController.updateOrderStatus);
+
+// Thêm route mới để lấy số lượng đơn hàng có trạng thái 'pending'
+router.get("/orders/pending/count", authenticateToken, OrderController.getPendingOrdersCount);
+
+// 💳 Thanh toán qua MoMo
+router.post("/orders/payment/momo", authenticateToken, OrderController.paymentMomo);
+
+// 🔔 Callback từ MoMo khi thanh toán xong
+router.post("/orders/momo/callback", OrderController.momoCallback);
 module.exports = router;

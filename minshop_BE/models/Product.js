@@ -215,6 +215,8 @@ class Product {
                 p.created_at,
                 p.updated_at,
                 p.sale,
+                AVG(r.rating) as "average_rating",
+                COUNT(DISTINCT r.review_id) as "review_count",
                 c.name AS category_name,
                 b.name AS brand_name,
                 CONCAT(
@@ -248,6 +250,7 @@ class Product {
             LEFT JOIN Product_Images pi ON p.product_id = pi.product_id
             LEFT JOIN Categories c ON p.category_id = c.category_id
             LEFT JOIN Brands b ON p.brand_id = b.brand_id
+            LEFT JOIN Reviews r ON p.product_id = r.product_id
             WHERE p.product_id = ?
             GROUP BY p.product_id;
         `, [productId]);

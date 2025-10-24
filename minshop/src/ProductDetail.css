@@ -178,3 +178,42 @@
 .policy-section li {
     margin-bottom: 6px;
 }
+
+.review-section {
+    margin-top: 40px;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.review-list {
+    margin-top: 10px;
+}
+
+.review-item {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stars .star {
+    color: #ccc;
+    font-size: 18px;
+}
+
+.stars .star.active {
+    color: #FFD700;
+}
+
+.review-comment {
+    margin: 6px 0;
+}
+
+.review-date {
+    color: #777;
+    font-size: 13px;
+}

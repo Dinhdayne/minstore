@@ -8,6 +8,8 @@ const ProductDetail = () => {
     const [product, setProduct] = useState(null);
     const [variants, setVariants] = useState([]);
     const [images, setImages] = useState([]);
+    const [reviews, setReviews] = useState([]);
+
     const [selectedColor, setSelectedColor] = useState("");
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedImage, setSelectedImage] = useState("");
@@ -27,7 +29,6 @@ const ProductDetail = () => {
         }
     };
 
-    // Gọi API
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -43,7 +44,25 @@ const ProductDetail = () => {
                 console.error("Lỗi kết nối:", err);
             }
         };
+
+        const fetchReviews = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch(`http://localhost:3000/api/reviews/product/${id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                const data = await res.json();
+                if (res.ok) setReviews(data);
+            } catch (err) {
+                console.error("Lỗi tải đánh giá:", err);
+            }
+        };
         fetchProduct();
+        fetchReviews();
     }, [id]);
 
     // Danh sách màu & size
@@ -147,9 +166,24 @@ const ProductDetail = () => {
                     Mã sản phẩm: <span>{product.sku || "Đang cập nhật"}</span>
                 </p>
                 <p className="product-status">
-                    Tình trạng: <span className="in-stock">Còn hàng</span>
+                    Mô tả sản phẩm: <span className="in-stock" >{product.description}</span>
                 </p>
 
+                {/* Đánh giá */}
+                <div className="rating-section">
+                    <span>Đánh giá: </span>
+                    <div className="rating-stars">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <span
+                                key={star}
+                                className={`star ${star <= Math.round(product.average_rating) ? "active" : ""}`}
+                            >
+                                &#9733;
+                            </span>
+                        ))}
+                    </div>
+                    <span className="review-count">({product.review_count || 0} đánh giá)</span>
+                </div>
                 {/* Giá */}
                 <div className="price-box">
                     <span className="new-price">
@@ -215,15 +249,6 @@ const ProductDetail = () => {
                     </div>
                 </div>
 
-                {/* Nút hành động */}
-                <div className="action-buttons">
-                    <button
-                        className="add-cart"
-                        onClick={() => handleAddToCart(product.product_id)}
-                    >
-                        🛒 Thêm vào giỏ
-                    </button>
-                </div>
 
                 {/* Chính sách */}
                 <div className="policy-section">
@@ -233,6 +258,47 @@ const ProductDetail = () => {
                         <li>Đổi sản phẩm dễ dàng trong 7 ngày</li>
                         <li>Kiểm tra, thanh toán khi nhận hàng (COD)</li>
                     </ul>
+                </div>
+                {/* Nút hành động */}
+                <div className="action-buttons">
+                    <button
+                        className="add-cart"
+                        onClick={() => handleAddToCart(product.product_id)}
+                    >
+                        🛒 Thêm vào giỏ
+                    </button>
+                </div>
+                {/* 🔻 PHẦN ĐÁNH GIÁ SẢN PHẨM 🔻 */}
+                <div className="review-section">
+                    <h2>Đánh giá sản phẩm</h2>
+
+                    {reviews.length === 0 ? (
+                        <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                    ) : (
+                        <div className="review-list">
+                            {reviews.map((r, i) => (
+                                <div key={i} className="review-item">
+                                    <div className="review-header">
+                                        <strong>{r.full_name || "Người dùng ẩn danh"}</strong>
+                                        <span className="stars">
+                                            {[1, 2, 3, 4, 5].map((s) => (
+                                                <span
+                                                    key={s}
+                                                    className={`star ${s <= r.rating ? "active" : ""}`}
+                                                >
+                                                    ★
+                                                </span>
+                                            ))}
+                                        </span>
+                                    </div>
+                                    <p className="review-comment">{r.comment}</p>
+                                    <small className="review-date">
+                                        {new Date(r.created_at).toLocaleDateString("vi-VN")}
+                                    </small>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -2,24 +2,91 @@ const pool = require("../config/db");
 
 class OrderModel {
     // 🔹 Tạo đơn hàng mới
-    static async createOrder({ user_id, address_id, items, total_amount, shipping_fee, discount_amount, notes }) {
+    static async createOrder({
+        user_id,
+        address_id,
+        items,
+        total_amount,
+        shipping_fee = 0,
+        discount_amount = 0,
+        coupon_code = null,
+        payment_method = "cod",
+        notes = "",
+        status_Pay,
+    }) {
         const conn = await pool.getConnection();
         try {
             await conn.beginTransaction();
 
+            let coupon_id = null;
+
+            // 🟡 Nếu có mã giảm giá thì kiểm tra tính hợp lệ
+            if (coupon_code) {
+                const [couponRows] = await conn.query(
+                    `SELECT * FROM Coupons 
+                 WHERE code = ? 
+                   AND is_active = TRUE 
+                   AND (expiry_date IS NULL OR expiry_date > NOW()) 
+                   AND (max_uses IS NULL OR uses_count < max_uses)`,
+                    [coupon_code]
+                );
+
+                if (couponRows.length === 0) {
+                    throw new Error("Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+                }
+
+                const coupon = couponRows[0];
+                coupon_id = coupon.coupon_id;
+
+                // 🧮 Kiểm tra điều kiện đơn tối thiểu
+                if (coupon.min_order_amount && total_amount < coupon.min_order_amount) {
+                    throw new Error(
+                        `Đơn hàng chưa đạt giá trị tối thiểu để dùng mã giảm giá (${coupon.min_order_amount}₫)`
+                    );
+                }
+
+                // 🧮 Tính giảm giá
+                let discount = 0;
+                if (coupon.discount_type === "percentage") {
+                    discount = (total_amount * coupon.discount_value) / 100;
+                } else {
+                    discount = coupon.discount_value;
+                }
+
+                discount_amount = Math.min(discount, total_amount);
+                total_amount = total_amount - discount_amount;
+
+                // 🟢 Cập nhật số lần sử dụng mã
+                await conn.query(
+                    `UPDATE Coupons SET uses_count = uses_count + 1 WHERE coupon_id = ?`,
+                    [coupon_id]
+                );
+            }
+
+            // 🟢 Tạo đơn hàng
             const [orderResult] = await conn.query(
-                `INSERT INTO Orders (user_id, address_id, total_amount, shipping_fee, discount_amount, notes)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-                [user_id, address_id, total_amount, shipping_fee, discount_amount, notes]
+                `INSERT INTO Orders 
+             (user_id, address_id, total_amount, shipping_fee, discount_amount, notes, payment_method, status_Pay)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [user_id, address_id, total_amount, shipping_fee, discount_amount, notes, payment_method, status_Pay]
             );
 
             const order_id = orderResult.insertId;
 
+            // 🟢 Thêm sản phẩm vào Order_Items
             for (const item of items) {
                 await conn.query(
                     `INSERT INTO Order_Items (order_id, variant_id, quantity, price)
-           VALUES (?, ?, ?, ?)`,
+                 VALUES (?, ?, ?, ?)`,
                     [order_id, item.variant_id, item.quantity, item.price]
+                );
+            }
+
+            // 🟢 Nếu có mã giảm giá → lưu vào bảng Order_Coupons
+            if (coupon_id) {
+                await conn.query(
+                    `INSERT INTO Order_Coupons (order_id, coupon_id) VALUES (?, ?)`,
+                    [order_id, coupon_id]
                 );
             }
 
@@ -33,6 +100,7 @@ class OrderModel {
             conn.release();
         }
     }
+
 
     // 🔹 Lấy danh sách đơn hàng theo user_id
     static async getOrdersByUser(user_id) {
@@ -66,6 +134,7 @@ class OrderModel {
                     oi.quantity,
                     oi.price,
                     p.name AS product_name,
+                    p.product_id,
                     pv.variant_id,
                     pv.attributes,
                     (SELECT image_url FROM Product_Images WHERE variant_id = pv.variant_id LIMIT 1) AS image_url
@@ -170,6 +239,24 @@ class OrderModel {
         } catch (error) {
             console.error("Lỗi updateStatus:", error);
             throw error;
+        }
+    }
+    static async getOrdersByStatus() {
+        const [rows] = await pool.query(
+            `SELECT COUNT(*) AS count FROM Orders WHERE status = 'pending'`
+        );
+        return rows[0].count;
+    }
+    static async updatePaymentStatus(order_id, status) {
+        try {
+            const [result] = await pool.query(
+                'UPDATE Orders SET status_Pay = ? WHERE order_id = ?',
+                [status, order_id]
+            );
+            return result;
+        } catch (err) {
+            console.error('❌ Lỗi updatePaymentStatus:', err);
+            throw err;
         }
     }
 }

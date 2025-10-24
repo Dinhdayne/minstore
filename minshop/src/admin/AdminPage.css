@@ -1074,3 +1074,69 @@ textarea {
     gap: 10px;
     align-items: center;
 }
+
+.admin-coupons-container {
+    padding: 20px;
+}
+
+.coupon-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.coupon-form input,
+.coupon-form select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.coupon-form button {
+    background: #007bff;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.coupon-form .cancel-btn {
+    background: gray;
+}
+
+.coupon-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.coupon-table th,
+.coupon-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.coupon-table th {
+    background: #f0f0f0;
+}
+
+.active-status {
+    color: green;
+    font-weight: bold;
+}
+
+.inactive-status {
+    color: red;
+    font-weight: bold;
+}
+
+.delete-btn {
+    background: red;
+    color: white;
+    margin-left: 5px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 6px;
+}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { getCustomer } from "../include/api";
+import { io } from "socket.io-client";
 import "../App.css";
 
 const Header = () => {
@@ -9,9 +10,50 @@ const Header = () => {
     const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
+
 
     const [showHeader, setShowHeader] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const userId = user?.user_id;
+        if (!userId) return; // ⛔ Không connect socket nếu chưa đăng nhập
+        console.log("🔍 user_id khi connect socket:", userId);
+        const socket = io("http://localhost:3000", {
+            auth: { user_id: userId },
+        });
+
+        socket.on("connect", () => {
+            console.log("🟢 Kết nối socket thành công:", socket.id);
+        });
+
+        socket.on("newCartItem", (data) => {
+            console.log("🛒 Có sản phẩm mới trong giỏ:", data);
+
+            // 🟢 Cập nhật realtime số lượng
+            setCartCount((prev) => prev + (data.quantity || 1));
+
+            // 🟡 Hiển thị thông báo tạm thời
+            const toast = document.createElement("div");
+            toast.textContent = `🎉 ${data.product_name || "Sản phẩm"} đã được thêm vào giỏ hàng!`;
+            toast.className = "cart-toast";
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add("hide");
+                setTimeout(() => toast.remove(), 500);
+            }, 2500);
+        });
+
+
+        socket.on("disconnect", () => {
+            console.log("🔴 Socket ngắt kết nối");
+        });
+
+        return () => socket.disconnect();
+    }, []);
 
     // Ẩn menu tài khoản khi click ra ngoài
     useEffect(() => {
@@ -39,6 +81,38 @@ const Header = () => {
         fetchCustomer();
     }, [isAuthenticated, user]);
 
+
+
+    // 🛒 Lấy số lượng sản phẩm trong giỏ hàng
+    useEffect(() => {
+        const fetchCartCount = async () => {
+            if (isAuthenticated && user?.user_id) {
+                try {
+                    const response = await fetch(
+                        `http://localhost:3000/api/cart/${user.user_id}`
+                    );
+                    const data = await response.json();
+                    console.log(data);
+
+                    // Nếu API trả về danh sách sản phẩm
+                    if (Array.isArray(data.items)) {
+                        setCartCount(data.items.length);
+                    } else if (Array.isArray(data)) {
+                        setCartCount(data.length);
+                    } else {
+                        setCartCount(0);
+                    }
+
+                } catch (error) {
+                    console.error("Lỗi khi lấy giỏ hàng:", error);
+                }
+            } else {
+                setCartCount(0);
+            }
+        };
+
+        fetchCartCount();
+    }, [isAuthenticated, user]);
     // Hiệu ứng header ẩn khi scroll
     useEffect(() => {
         const handleScroll = () => {
@@ -142,6 +216,10 @@ const Header = () => {
                                 src={isAuthenticated ? "/images/bag1.png" : "images/bag.png"}
                                 alt="Giỏ hàng"
                             />
+                            {/* 🛒 Badge hiển thị số lượng sản phẩm */}
+                            {cartCount > 0 && (
+                                <span className="cart-badge">{cartCount}</span>
+                            )}
                         </a>
                     </div>
                 </div>

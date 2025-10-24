@@ -635,7 +635,7 @@ nav ul li ul li a:hover {
   color: #d81b60;
   font-weight: 700;
   font-size: 10px;
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .product-card .original-price {
@@ -1294,4 +1294,50 @@ h2 {
   max-width: 1550px;
   margin: 0 auto;
   padding: 0 20px;
+}
+
+.header-icons a {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  padding: 2px 6px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.coupon-section,
+.payment-method-section {
+  background: #fafafa;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.coupon-section select {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.payment-method-section label {
+  display: block;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.discount-line {
+  color: green;
+}
+
+.final-total {
+  font-size: 1.2em;
+  color: #e91e63;
 }

@@ -10,6 +10,7 @@ import AdminOrders from "./admin/AdminOrders";
 import AdminReports from "./admin/Statistics";
 import AdminPurchases from "./admin/AdminPurchases";
 import AdminSuppliers from "./admin/AdminSuppliers";
+import AdminCoupons from "./admin/AdminCoupons";
 
 const AccountPage = () => {
     const [activeTab, setActiveTab] = useState("Products");
@@ -29,19 +30,42 @@ const AccountPage = () => {
     }, [navigate]);
     // 🧠 Kết nối socket.io để nhận đơn hàng mới
     useEffect(() => {
-        const socket = io("http://localhost:3000"); // 🔥 kết nối server
+        // 🟢 Hàm lấy số đơn hàng pending từ server
+        const fetchPendingCount = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch("http://localhost:3000/api/orders/pending/count",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                const data = await res.json();
+                setNewOrderCount(data.pendingCount || 0);
+            } catch (error) {
+                console.error("❌ Lỗi khi lấy số đơn pending:", error);
+            }
+        };
+
+        // Gọi 1 lần khi trang load
+        fetchPendingCount();
+
+        // 🔥 Kết nối socket
+        const socket = io("http://localhost:3000");
 
         socket.on("connect", () => {
             console.log("✅ Kết nối socket:", socket.id);
         });
 
-        socket.on("newOrder", (order) => {
+        socket.on("newOrder", async (order) => {
             console.log("📦 Có đơn hàng mới:", order);
 
-            setNewOrderCount((prev) => prev + 1);
-            setShowNotification(true);
+            // Cập nhật lại số đơn pending (thay vì chỉ +1)
+            await fetchPendingCount();
 
-            // Tự ẩn thông báo sau 4 giây
+            // Hiển thị thông báo popup
+            setShowNotification(true);
             setTimeout(() => setShowNotification(false), 4000);
         });
 
@@ -49,6 +73,7 @@ const AccountPage = () => {
             socket.disconnect();
         };
     }, []);
+
     const menuItems = [
         "Products",
         "Categories",
@@ -59,7 +84,6 @@ const AccountPage = () => {
         "Purchases",
         "Statistics",
         "Coupons",
-        "Chat",
     ];
 
     const InfoRow = ({ label, value }) => (
@@ -115,7 +139,7 @@ const AccountPage = () => {
 
             case "Orders":
                 // reset badge khi admin click vào Orders
-                if (newOrderCount > 0) setNewOrderCount(0);
+                // if (newOrderCount > 0) setNewOrderCount(0);
                 return <AdminOrders />;
 
             case "Purchases":
@@ -128,22 +152,9 @@ const AccountPage = () => {
                 return <AdminBrands />;
 
             case "Coupons":
-                return (
-                    <>
-                        <h2>Chat</h2>
-                        <p>Chưa có đánh giá nào.</p>
-                    </>
-                );
+                return <AdminCoupons />;
             case "Suppliers":
                 return <AdminSuppliers />;
-
-            case "Chat":
-                return (
-                    <>
-                        <h2>Chat</h2>
-                        <p>Chưa có đánh giá nào.</p>
-                    </>
-                );
             default:
                 return null;
         }

@@ -290,6 +290,56 @@ const AccountPage = () => {
 
     const [orders, setOrders] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(true);
+    // ⭐ Form đánh giá sản phẩm
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [reviewOrderId, setReviewOrderId] = useState(null);
+    const [reviewRating, setReviewRating] = useState(5);
+    const [reviewComment, setReviewComment] = useState("");
+
+    // Mở form đánh giá
+    const handleReviewProduct = (productId) => {
+        setReviewOrderId(productId);
+        setIsReviewModalOpen(true);
+    };
+
+    // Gửi đánh giá lên server
+    const handleSubmitReview = async () => {
+        if (!reviewComment.trim()) {
+            alert("Vui lòng nhập nội dung đánh giá!");
+            return;
+        }
+
+        try {
+            const user = JSON.parse(localStorage.getItem("user"));
+            const token = localStorage.getItem("token");
+            const res = await fetch("http://localhost:3000/api/reviews", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    user_id: user.user_id,
+                    product_id: reviewOrderId,
+                    rating: reviewRating,
+                    comment: reviewComment,
+                }),
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert("Đánh giá sản phẩm thành công!");
+                setIsReviewModalOpen(false);
+                setReviewComment("");
+                setReviewRating(5);
+            } else {
+                alert("Lỗi: " + data.message);
+            }
+        } catch (err) {
+            console.error("Lỗi khi gửi đánh giá:", err);
+            alert("Không thể gửi đánh giá!");
+        }
+    };
 
     const fetchOrders = async () => {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -329,7 +379,6 @@ const AccountPage = () => {
         "Lịch sử đơn hàng",
         "Ví Voucher",
         "Sổ địa chỉ",
-        "Đánh giá và phản hồi",
     ];
 
     const InfoRow = ({ label, value }) => (
@@ -437,6 +486,35 @@ const AccountPage = () => {
         setShowModal(true);
         setEditingAddress(addr); // thêm state này
     };
+
+    // 🔹 Huỷ đơn hàng
+    const handleCancelOrder = async (orderId) => {
+        if (!window.confirm("Bạn có chắc muốn huỷ đơn hàng này không?")) return;
+
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:3000/api/orders/${orderId}/status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ status: "cancelled" }),
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert("Đã huỷ đơn hàng thành công!");
+                fetchOrders(); // reload lại danh sách
+            } else {
+                alert("Lỗi: " + data.message);
+            }
+        } catch (err) {
+            console.error("Lỗi khi huỷ đơn:", err);
+            alert("Không thể huỷ đơn hàng!");
+        }
+    };
+
     useEffect(() => {
         fetchProfile();
         fetchAddresses();
@@ -498,7 +576,7 @@ const AccountPage = () => {
                                 onUpdated={fetchProfile}
                             />
                         )}
-
+                        {/* 
                         <div className="info-login">
                             <h3>Thông tin đăng nhập</h3>
                             <InfoRow
@@ -506,8 +584,7 @@ const AccountPage = () => {
                                 value={safeValue(profile?.email)}
                             />
                             <InfoRow label="Mật khẩu" value="************" />
-                            <button className="btn-update">Cập nhật</button>
-                        </div>
+                        </div> */}
                     </>
                 );
 
@@ -527,6 +604,7 @@ const AccountPage = () => {
                                         <div className="order-header">
                                             <div>
                                                 <strong>Mã đơn:</strong> #{order.order_id}
+
                                             </div>
                                             <div>
                                                 <strong>Ngày đặt:</strong>{" "}
@@ -579,6 +657,17 @@ const AccountPage = () => {
                                                     <div className="item-price">
                                                         {(item.price * item.quantity).toLocaleString()}₫
                                                     </div>
+                                                    <div className="order-actions">
+                                                        {order.status === "delivered" && (
+                                                            <button
+                                                                className="btn-review"
+                                                                onClick={() => handleReviewProduct(item.product_id)}
+                                                            >
+                                                                Đánh giá sản phẩm
+                                                            </button>
+                                                        )}
+
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -587,6 +676,18 @@ const AccountPage = () => {
                                         <div className="order-total">
                                             <span>Tổng tiền:</span>{" "}
                                             <strong>{order.total_amount.toLocaleString()}₫</strong>
+                                        </div>
+                                        {/* Nút hành động cho đơn hàng */}
+                                        <div className="order-actions">
+                                            {(order.status === "processing" || order.status === "pending") && (
+                                                <button
+                                                    className="btn-cancel"
+                                                    onClick={() => handleCancelOrder(order.order_id)}
+                                                >
+                                                    Huỷ đơn hàng
+                                                </button>
+                                            )}
+
                                         </div>
 
                                         {/* Địa chỉ giao hàng */}
@@ -685,6 +786,7 @@ const AccountPage = () => {
         }
     };
 
+
     return (
         <div className="account-container">
             {/* Sidebar trái */}
@@ -703,6 +805,45 @@ const AccountPage = () => {
 
             {/* Nội dung phải */}
             <div className="account-content">{renderContent()}</div>
+            {/* 🟨 Modal đánh giá sản phẩm */}
+            {
+                isReviewModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <h2>Đánh giá sản phẩm</h2>
+
+                            <div className="rating-stars">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <span
+                                        key={star}
+                                        className={`star ${reviewRating >= star ? "active" : ""}`}
+                                        onClick={() => setReviewRating(star)}
+                                    >
+                                        ★
+                                    </span>
+                                ))}
+                            </div>
+
+                            <textarea
+                                placeholder="Nhập nhận xét của bạn..."
+                                value={reviewComment}
+                                onChange={(e) => setReviewComment(e.target.value)}
+                                className="full-input"
+                                rows={4}
+                            />
+
+                            <div className="button-group">
+                                <button className="btn-cancel" onClick={() => setIsReviewModalOpen(false)}>
+                                    Hủy
+                                </button>
+                                <button className="btn-save" onClick={handleSubmitReview}>
+                                    Gửi đánh giá
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     );
 };

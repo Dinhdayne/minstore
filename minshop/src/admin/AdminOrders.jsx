@@ -168,6 +168,7 @@ const AdminOrders = () => {
                             <th>ID</th>
                             <th>Email</th>
                             <th>Ngày đặt</th>
+                            <th>Giảm giá</th>
                             <th>Tổng tiền</th>
                             <th>SĐT</th>
                             <th>Trạng thái</th>
@@ -181,6 +182,7 @@ const AdminOrders = () => {
                                 <td>{order.order_id}</td>
                                 <td>{order.user_email || "Ẩn danh"}</td>
                                 <td>{new Date(order.order_date).toLocaleString("vi-VN")}</td>
+                                <td>{order.discount_amount?.toLocaleString("vi-VN")}₫</td>
                                 <td>{order.total_amount?.toLocaleString("vi-VN")}₫</td>
                                 <td>{order.phone}</td>
                                 <td>
@@ -261,6 +263,7 @@ const AdminOrders = () => {
                                 ))}
                             </tbody>
                         </table>
+                        <p><strong>Giảm giá:</strong> {orderDetails.discount_amount?.toLocaleString("vi-VN")}₫</p>
                         <p><strong>Tổng tiền:</strong> {orderDetails.total_amount?.toLocaleString("vi-VN")}₫</p>
                         <div className="modal-footer">
                             <button onClick={() => setSelectedOrder(null)}>Đóng</button>

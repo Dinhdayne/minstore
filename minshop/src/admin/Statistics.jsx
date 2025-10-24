@@ -10,6 +10,7 @@ const AdminReports = () => {
     const [topProducts, setTopProducts] = useState([]);
     const [customerStats, setCustomerStats] = useState({});
     const [returnStats, setReturnStats] = useState([]);
+    const [importStats, setImportStats] = useState([]);
 
     const [loading, setLoading] = useState(true);
 
@@ -31,7 +32,7 @@ const AdminReports = () => {
             });
 
             const token = localStorage.getItem("token");
-            const [revRes, prodRes, cusRes, retRes] = await Promise.all([
+            const [revRes, prodRes, cusRes, retRes, impRes] = await Promise.all([
                 fetch(`http://localhost:3000/api/statistics/revenue?${queryParams}`, {
                     headers: {
                         "Content-Type": "application/json",
@@ -56,19 +57,27 @@ const AdminReports = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 }),
+                fetch("http://localhost:3000/api/statistics/inventory/logs", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
             ]);
 
-            const [revData, prodData, cusData, retData] = await Promise.all([
+            const [revData, prodData, cusData, retData, impData] = await Promise.all([
                 revRes.json(),
                 prodRes.json(),
                 cusRes.json(),
                 retRes.json(),
+                impRes.json(),
             ]);
 
             setRevenueData(revData);
             setTopProducts(prodData);
             setCustomerStats(cusData);
             setReturnStats(retData);
+            setImportStats(impData);
         } catch (err) {
             console.error("Lỗi khi lấy dữ liệu báo cáo:", err);
         } finally {
@@ -251,6 +260,41 @@ const AdminReports = () => {
                     </LineChart>
                 </ResponsiveContainer>
             </section>
+            {/* --- 6️⃣ Thống kê nhập kho --- */}
+            {/* <section className="report-section">
+                <h3>Thống kê nhập kho</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={importStats}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line
+                            type="monotone"
+                            dataKey="total_imports"
+                            stroke="#3B82F6"
+                            strokeWidth={2}
+                            name="Số lần nhập"
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="total_quantity"
+                            stroke="#10B981"
+                            strokeWidth={2}
+                            name="Tổng số lượng nhập"
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="total_cost"
+                            stroke="#F59E0B"
+                            strokeWidth={2}
+                            name="Tổng giá trị nhập (VNĐ)"
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </section> */}
+
         </div>
     );
 };

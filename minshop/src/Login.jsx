@@ -98,8 +98,7 @@ const Login = () => {
                     <h1>MinShop</h1>
 
                     <div className="tabs">
-                        <div className="tab active">Đăng nhập</div>
-                        <Link to="/register" className="tab">Đăng ký</Link>
+                        <div className="tab active">Đăng nhập và đăng ký</div>
                     </div>
 
                     {error && <div className="error-message">{error}</div>}
@@ -142,8 +141,6 @@ const Login = () => {
                         />
                     </GoogleOAuthProvider>
                     <div className="links">
-                        <Link to="/register">Bạn chưa có tài khoản? Đăng ký</Link>
-                        <Link to="/forgot-password">Bạn quên mật khẩu?</Link>
                     </div>
                 </div>
             </form>
