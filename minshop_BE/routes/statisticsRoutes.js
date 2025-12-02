@@ -18,21 +18,21 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-// 🔹 Route doanh thu
+//  Route doanh thu
 router.get("/revenue", authenticateToken, StatisticsController.getRevenueSummary);
 
-// 🔹 Route top sản phẩm bán chạy
+//  Route top sản phẩm bán chạy
 router.get("/top-products", authenticateToken, StatisticsController.getTopProducts);
 
-// 🔹 Route tổng quan tồn kho
+//  Route tổng quan tồn kho
 router.get("/inventory", authenticateToken, StatisticsController.getInventoryOverview);
 
-// 🔹 Route lịch sử thay đổi kho
+//  Route lịch sử thay đổi kho
 router.get("/inventory/logs", authenticateToken, StatisticsController.getInventoryLogs);
 
-// 🔹 Route thống kê khách hàng
+//  Route thống kê khách hàng
 router.get("/customers", authenticateToken, StatisticsController.getCustomerStats);
 
-// 🔹 Hoàn hàng
+//  Hoàn hàng
 router.get("/returns", authenticateToken, StatisticsController.getReturnStats);
 module.exports = router;

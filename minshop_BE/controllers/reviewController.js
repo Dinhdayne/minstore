@@ -1,13 +1,13 @@
 const Reviews = require('../models/Review');
 const ReviewController = {
-    // 🟢 Thêm đánh giá mới
+    //  Thêm đánh giá mới
     async addReview(req, res) {
         try {
             const { user_id, product_id, rating, comment } = req.body;
             if (!user_id || !product_id || !rating) {
                 return res.status(400).json({ message: 'Thiếu thông tin đánh giá' });
             }
-            console.log("📩 Body received:", req.body);
+            console.log(" Body received:", req.body);
 
             const result = await Reviews.addReview({ user_id, product_id, rating, comment });
             res.status(201).json({ message: 'Đánh giá đã được thêm', review_id: result.review_id });
@@ -16,7 +16,7 @@ const ReviewController = {
         }
     },
 
-    // 📜 Lấy đánh giá theo sản phẩm
+    //  Lấy đánh giá theo sản phẩm
     async getReviewsByProduct(req, res) {
         try {
             const { product_id } = req.params;
@@ -26,7 +26,7 @@ const ReviewController = {
             res.status(500).json({ message: 'Lỗi khi lấy đánh giá', error: error.message });
         }
     },
-    // 🔄 Cập nhật đánh giá
+    //  Cập nhật đánh giá
     async updateReview(req, res) {
         try {
             const { review_id } = req.params;
@@ -40,7 +40,7 @@ const ReviewController = {
             res.status(500).json({ message: 'Lỗi khi cập nhật đánh giá', error: error.message });
         }
     },
-    // ❌ Xoá đánh giá
+    //  Xoá đánh giá
     async deleteReview(req, res) {
         try {
             const { review_id } = req.params;

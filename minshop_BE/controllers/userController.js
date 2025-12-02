@@ -59,7 +59,7 @@ const deleteUser = async (req, res) => {
 
         res.json({ message: 'Người dùng đã được xóa' });
     } catch (error) {
-        console.error("🔥 Lỗi khi xóa người dùng:", error); // 👈 In lỗi chi tiết
+        console.error(" Lỗi khi xóa người dùng:", error); // 👈 In lỗi chi tiết
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
 };

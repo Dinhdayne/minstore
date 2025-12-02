@@ -1,7 +1,7 @@
 const pool = require("../config/db");
 
 const SupplierModel = {
-    // 🔹 Lấy danh sách tất cả nhà cung cấp
+    //  Lấy danh sách tất cả nhà cung cấp
     async getAll() {
         const [rows] = await pool.query(`
             SELECT supplier_id, name, contact_email, phone, created_at
@@ -11,7 +11,7 @@ const SupplierModel = {
         return rows;
     },
 
-    // 🔹 Lấy 1 nhà cung cấp theo ID
+    //  Lấy 1 nhà cung cấp theo ID
     async getById(id) {
         const [rows] = await pool.query(`
             SELECT supplier_id, name, contact_email, phone, created_at
@@ -21,7 +21,7 @@ const SupplierModel = {
         return rows[0];
     },
 
-    // 🔹 Thêm nhà cung cấp mới
+    //  Thêm nhà cung cấp mới
     async create({ name, contact_email, phone }) {
         const [result] = await pool.query(`
             INSERT INTO Suppliers (name, contact_email, phone)
@@ -30,7 +30,7 @@ const SupplierModel = {
         return { supplier_id: result.insertId };
     },
 
-    // 🔹 Cập nhật thông tin nhà cung cấp
+    //  Cập nhật thông tin nhà cung cấp
     async update(id, { name, contact_email, phone }) {
         await pool.query(`
             UPDATE Suppliers
@@ -40,7 +40,7 @@ const SupplierModel = {
         return { message: "Cập nhật thành công" };
     },
 
-    // 🔹 Xóa nhà cung cấp
+    //  Xóa nhà cung cấp
     async delete(id) {
         await pool.query(`
             DELETE FROM Suppliers WHERE supplier_id = ?

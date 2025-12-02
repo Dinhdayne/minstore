@@ -19,14 +19,14 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-// 🟢 Thêm đánh giá mới
+//  Thêm đánh giá mới
 router.post('/', authenticateToken, ReviewController.addReview);
 
-// 📜 Lấy đánh giá theo sản phẩm
+//  Lấy đánh giá theo sản phẩm
 router.get('/product/:product_id', authenticateToken, ReviewController.getReviewsByProduct);
-// 🔄 Cập nhật đánh giá
+//  Cập nhật đánh giá
 router.put('/:review_id', authenticateToken, ReviewController.updateReview);
 
-// ❌ Xoá đánh giá
+//  Xoá đánh giá
 router.delete('/:review_id', authenticateToken, ReviewController.deleteReview);
 module.exports = router;

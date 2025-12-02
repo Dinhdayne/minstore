@@ -5,7 +5,7 @@ const crypto = require("crypto");
 let io;
 
 const OrderController = {
-    // ✅ Tạo đơn hàng mới
+    //  Tạo đơn hàng mới
     async create(req, res) {
         try {
             const {
@@ -16,8 +16,8 @@ const OrderController = {
                 shipping_fee = 0,
                 discount_amount = 0,
                 notes = "",
-                coupon_code = null,       // 🎟️ thêm
-                payment_method = "cod",   // 💳 thêm
+                coupon_code = null,
+                payment_method = "cod",
                 status_Pay = "pending",
             } = req.body;
 
@@ -57,13 +57,13 @@ const OrderController = {
                 total_amount,
             });
         } catch (error) {
-            console.error("❌ Lỗi khi tạo đơn hàng:", error);
+            console.error(" Lỗi khi tạo đơn hàng:", error);
             res.status(500).json({ message: "Lỗi khi tạo đơn hàng", error: error.message });
         }
     },
 
 
-    // 📜 Lấy danh sách đơn hàng theo user
+    //  Lấy danh sách đơn hàng theo user
     async getByUser(req, res) {
         try {
             const { user_id } = req.params;
@@ -74,7 +74,7 @@ const OrderController = {
         }
     },
 
-    // 🧾 Lấy danh sách tất cả đơn hàng (admin)
+    //  Lấy danh sách tất cả đơn hàng (admin)
     async getAll(req, res) {
         try {
             const orders = await OrderModel.getAllOrders();
@@ -84,7 +84,7 @@ const OrderController = {
         }
     },
 
-    // 🔍 Lấy chi tiết đơn hàng
+    //  Lấy chi tiết đơn hàng
     async getDetail(req, res) {
         try {
             const { order_id } = req.params;
@@ -119,7 +119,7 @@ const OrderController = {
         }
     },
 
-    // 💳 Thanh toán bằng MOMO
+    //  Thanh toán bằng MOMO
     async paymentMomo(req, res) {
         try {
             const { order_id, amount } = req.body;
@@ -132,7 +132,7 @@ const OrderController = {
             const accessKey = "F8BBA842ECF85";
             const secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
             const requestId = partnerCode + Date.now();
-            const momoOrderId = `${order_id}_${Date.now()}`; // ✅ orderId unique mỗi lần
+            const momoOrderId = `${order_id}_${Date.now()}`; //  orderId unique mỗi lần
 
             const orderInfo = `Thanh toán đơn #${order_id}`;
 
@@ -174,7 +174,7 @@ const OrderController = {
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            console.log("🔗 MoMo response:", momoResponse.data);
+            console.log(" MoMo response:", momoResponse.data);
 
             // Lưu trạng thái pending vào DB (nếu chưa có)
             await OrderModel.updatePaymentStatus(order_id, "pending");
@@ -186,12 +186,12 @@ const OrderController = {
             });
 
         } catch (error) {
-            console.error("❌ Lỗi khi thanh toán MoMo:", error.response?.data || error.message);
+            console.error(" Lỗi khi thanh toán MoMo:", error.response?.data || error.message);
             res.status(500).json({ message: "Lỗi khi thanh toán MoMo", error: error.message });
         }
     },
 
-    // 🧾 MoMo callback khi thanh toán thành công
+    //  MoMo callback khi thanh toán thành công
     async momoCallback(req, res) {
         try {
             const { orderId, resultCode } = req.body;
@@ -199,15 +199,15 @@ const OrderController = {
 
             if (resultCode === 0) {
                 await OrderModel.updatePaymentStatus(realOrderId, "paid");
-                console.log(`✅ Đơn hàng ${realOrderId} đã thanh toán thành công`);
+                console.log(` Đơn hàng ${realOrderId} đã thanh toán thành công`);
             } else {
                 await OrderModel.updatePaymentStatus(realOrderId, "failed");
-                console.log(`❌ Thanh toán thất bại cho đơn hàng ${realOrderId}`);
+                console.log(` Thanh toán thất bại cho đơn hàng ${realOrderId}`);
             }
 
             res.status(200).json({ message: "Callback received" });
         } catch (error) {
-            console.error("❌ Lỗi callback MoMo:", error);
+            console.error(" Lỗi callback MoMo:", error);
             res.status(500).json({ message: "Lỗi callback MoMo" });
         }
     }

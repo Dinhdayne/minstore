@@ -6,7 +6,7 @@ const {
     deleteUserProfile,
 } = require("../models/userProfile");
 
-// ➕ Tạo hồ sơ mới
+// Tạo hồ sơ mới
 const addProfile = async (req, res) => {
     try {
         const id = await createUserProfile(req.body);
@@ -17,7 +17,7 @@ const addProfile = async (req, res) => {
     }
 };
 
-// 📋 Lấy tất cả hồ sơ
+//  Lấy tất cả hồ sơ
 const getProfiles = async (req, res) => {
     try {
         const profiles = await getAllProfiles();
@@ -27,7 +27,7 @@ const getProfiles = async (req, res) => {
     }
 };
 
-// 🔍 Lấy hồ sơ theo user_id
+//  Lấy hồ sơ theo user_id
 const getProfile = async (req, res) => {
     try {
         const profile = await getProfileByUserId(req.params.user_id);
@@ -38,7 +38,7 @@ const getProfile = async (req, res) => {
     }
 };
 
-// ✏️ Cập nhật hồ sơ
+//  Cập nhật hồ sơ
 const updateProfile = async (req, res) => {
     try {
         const result = await updateUserProfile(req.params.user_id, req.body);
@@ -49,7 +49,7 @@ const updateProfile = async (req, res) => {
     }
 };
 
-// ❌ Xóa hồ sơ
+//  Xóa hồ sơ
 const removeProfile = async (req, res) => {
     try {
         const result = await deleteUserProfile(req.params.user_id);

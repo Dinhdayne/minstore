@@ -18,19 +18,19 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-// 🔹 Danh sách đơn nhập hàng
+//  Danh sách đơn nhập hàng
 router.get("/", authenticateToken, PurchaseController.getAll);
 
-// 🔹 Chi tiết 1 đơn nhập
+//  Chi tiết 1 đơn nhập
 router.get("/:id", authenticateToken, PurchaseController.getById);
 
-// 🔹 Tạo đơn nhập hàng
+//  Tạo đơn nhập hàng
 router.post("/", authenticateToken, PurchaseController.create);
 
-// 🔹 Cập nhật trạng thái (pending → received)
+//  Cập nhật trạng thái (pending → received)
 router.put("/:id/status", authenticateToken, PurchaseController.updateStatus);
 
-// 🔹 Xóa đơn nhập hàng
+//  Xóa đơn nhập hàng
 router.delete("/:id", authenticateToken, PurchaseController.delete);
 
 module.exports = router;

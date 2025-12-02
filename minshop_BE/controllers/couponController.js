@@ -1,7 +1,7 @@
 const CouponModel = require("../models/couponModel");
 
 const CouponController = {
-    // 🟢 Tạo coupon
+    //  Tạo coupon
     async create(req, res) {
         try {
             const coupon = await CouponModel.create(req.body);
@@ -11,7 +11,7 @@ const CouponController = {
         }
     },
 
-    // 🟢 Lấy tất cả coupon
+    //  Lấy tất cả coupon
     async getAll(req, res) {
         try {
             const coupons = await CouponModel.getAll();
@@ -21,7 +21,7 @@ const CouponController = {
         }
     },
 
-    // 🟢 Áp dụng mã giảm giá
+    //  Áp dụng mã giảm giá
     async apply(req, res) {
         try {
             const { code, orderAmount } = req.body;

@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 
 class Product {
-    // 📦 Lấy tất cả sản phẩm (kèm biến thể và ảnh)
+    //  Lấy tất cả sản phẩm (kèm biến thể và ảnh)
     static async findAll() {
         const [rows] = await pool.query(`
             SELECT 
@@ -313,7 +313,7 @@ class Product {
         return rows;
     }
 
-    // 🔹 Thêm sản phẩm
+    //  Thêm sản phẩm
     static async createProduct({ name, description, base_price, category_id, brand_id, sku, weight }) {
         const [result] = await pool.query(
             `INSERT INTO Products (name, description, base_price, category_id, brand_id, sku, weight)
@@ -372,7 +372,7 @@ class Product {
         }
     }
 
-    // 🟢 1 Cập nhật thông tin sản phẩm chính
+    // 1 Cập nhật thông tin sản phẩm chính
     static async updateProduct(productId, { name, description, base_price, category_id, brand_id, sku, weight, is_active, sale }) {
         await pool.query(
             `UPDATE Products 
@@ -382,7 +382,7 @@ class Product {
         );
     }
 
-    // 🟢 2 Cập nhật biến thể & ảnh (xóa cũ → thêm lại)
+    //  2 Cập nhật biến thể & ảnh (xóa cũ → thêm lại)
     static async updateVariantById(variantId, data) {
         const conn = await pool.getConnection();
         try {

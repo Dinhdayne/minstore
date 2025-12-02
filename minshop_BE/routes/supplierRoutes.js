@@ -18,7 +18,7 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-// 🔹 Route chính
+//  Route chính
 router.get("/", SupplierController.getAll);
 router.get("/:id", authenticateToken, SupplierController.getById);
 router.post("/", authenticateToken, SupplierController.create);

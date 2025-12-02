@@ -1,7 +1,7 @@
 const SupplierModel = require("../models/supplierModel");
 
 const SupplierController = {
-    // 🔹 GET /api/suppliers
+    //  GET /api/suppliers
     async getAll(req, res) {
         try {
             const data = await SupplierModel.getAll();
@@ -12,7 +12,7 @@ const SupplierController = {
         }
     },
 
-    // 🔹 GET /api/suppliers/:id
+    //  GET /api/suppliers/:id
     async getById(req, res) {
         try {
             const { id } = req.params;
@@ -25,7 +25,7 @@ const SupplierController = {
         }
     },
 
-    // 🔹 POST /api/suppliers
+    //  POST /api/suppliers
     async create(req, res) {
         try {
             const { name, contact_email, phone } = req.body;
@@ -39,7 +39,7 @@ const SupplierController = {
         }
     },
 
-    // 🔹 PUT /api/suppliers/:id
+    //  PUT /api/suppliers/:id
     async update(req, res) {
         try {
             const { id } = req.params;
@@ -53,7 +53,7 @@ const SupplierController = {
         }
     },
 
-    // 🔹 DELETE /api/suppliers/:id
+    //  DELETE /api/suppliers/:id
     async delete(req, res) {
         try {
             const { id } = req.params;

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const {getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder } = require('../controllers/clientOrderController');
+const { getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder } = require('../controllers/clientOrderController');
 
 // Middleware kiểm tra token
 const authenticateToken = async (req, res, next) => {
@@ -19,7 +19,7 @@ const authenticateToken = async (req, res, next) => {
     }
 };
 
-// Định nghĩa các tuyến
+
 router.get('/client-orders', getAllOrders);          // Lấy tất cả đơn hàng
 router.get('/client-orders/:id', getOrderById);      // Lấy 1 đơn hàng theo ID
 router.post('/client-orders', authenticateToken, createOrder);          // Tạo mới đơn hàng (cần token)

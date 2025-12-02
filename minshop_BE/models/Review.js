@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 const ReviewModel = {
-    // 🟢 Thêm đánh giá mới
+    //  Thêm đánh giá mới
     async addReview({ user_id, product_id, rating, comment }) {
         const [result] = await pool.query(
             'INSERT INTO Reviews (user_id, product_id, rating, comment, created_at) VALUES (?, ?, ?, ?, NOW())',
@@ -9,7 +9,7 @@ const ReviewModel = {
         return { review_id: result.insertId };
     },
 
-    // 📜 Lấy đánh giá theo sản phẩm
+    //  Lấy đánh giá theo sản phẩm
     async getReviewsByProduct(product_id) {
         const [rows] = await pool.query(`
                 SELECT 
@@ -30,7 +30,7 @@ const ReviewModel = {
         return rows;
     },
 
-    // 🔄 Cập nhật đánh giá
+    //  Cập nhật đánh giá
     async updateReview({ review_id, rating, comment }) {
         const [result] = await pool.query(
             'UPDATE Reviews SET rating = ?, comment = ? WHERE review_id = ?',
@@ -39,7 +39,7 @@ const ReviewModel = {
         return { affectedRows: result.affectedRows };
     },
 
-    // ❌ Xoá đánh giá      
+    //  Xoá đánh giá      
     async deleteReview(review_id) {
         const [result] = await pool.query(
             'DELETE FROM Reviews WHERE review_id = ?',

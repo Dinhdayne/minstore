@@ -29,7 +29,6 @@ const getVariant = async (req, res) => {
 };
 
 
-// 📥 GET /api/cart/:userId
 const getCart = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -41,7 +40,6 @@ const getCart = async (req, res) => {
     }
 };
 
-// ➕ POST /api/cart/add
 const addToCart = async (req, res) => {
     try {
         const userId = req.user?.user_id || req.user?.id;
@@ -82,14 +80,12 @@ const addToCart = async (req, res) => {
             [cartId, variantId]
         );
 
-        // 🟢 Gửi realtime CHỈ CHO USER NÀY
         notifyNewCartItem(userId, cartItem);
 
         res.json({
             message: "Thêm vào giỏ hàng thành công",
             cartItem,
         });
-        // ✅ Gửi response một lần duy nhất
         //        return res.json({ message: "Thêm vào giỏ hàng thành công", cartId });
 
     } catch (error) {
@@ -100,7 +96,7 @@ const addToCart = async (req, res) => {
 
 
 
-// ✏️ PUT /api/cart/update/:cartItemId
+// PUT /api/cart/update/:cartItemId
 const updateQuantity = async (req, res) => {
     try {
         const { cartItemId } = req.params;
@@ -112,7 +108,7 @@ const updateQuantity = async (req, res) => {
     }
 };
 
-// 🎨 PUT /api/cart/update-variant/:cartItemId
+// PUT /api/cart/update-variant/:cartItemId
 const updateVariant = async (req, res) => {
     try {
         const { cartItemId } = req.params;
@@ -131,7 +127,7 @@ const updateVariant = async (req, res) => {
 };
 
 
-// ❌ DELETE /api/cart/item/:cartItemId
+// DELETE /api/cart/item/:cartItemId
 const removeItem = async (req, res) => {
     try {
         const { cartItemId } = req.params;
@@ -142,7 +138,7 @@ const removeItem = async (req, res) => {
     }
 };
 
-// 🗑️ DELETE /api/cart/clear/:userId
+// DELETE /api/cart/clear/:userId
 const clearCartAll = async (req, res) => {
     try {
         const { userId } = req.params;

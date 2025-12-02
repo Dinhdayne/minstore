@@ -1,6 +1,6 @@
 const pool = require("../config/db");
 
-// ➕ Thêm hồ sơ mới
+//  Thêm hồ sơ mới
 const createUserProfile = async (profileData) => {
     const {
         user_id,
@@ -32,19 +32,19 @@ const createUserProfile = async (profileData) => {
     return result.insertId;
 };
 
-// 📋 Lấy tất cả hồ sơ
+//  Lấy tất cả hồ sơ
 const getAllProfiles = async () => {
     const [rows] = await pool.query("SELECT * FROM User_Profiles");
     return rows;
 };
 
-// 🔍 Lấy hồ sơ theo user_id
+//  Lấy hồ sơ theo user_id
 const getProfileByUserId = async (user_id) => {
     const [rows] = await pool.query("SELECT * FROM User_Profiles WHERE user_id = ?", [user_id]);
     return rows[0];
 };
 
-// ✏️ Cập nhật hồ sơ
+//  Cập nhật hồ sơ
 const updateUserProfile = async (user_id, data) => {
     const fields = [];
     const values = [];
@@ -68,7 +68,7 @@ const updateUserProfile = async (user_id, data) => {
     return result;
 };
 
-// ❌ Xóa hồ sơ
+//  Xóa hồ sơ
 const deleteUserProfile = async (user_id) => {
     const [result] = await pool.query("DELETE FROM User_Profiles WHERE user_id = ?", [user_id]);
     return result;

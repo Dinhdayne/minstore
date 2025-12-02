@@ -119,7 +119,7 @@ const createVariantsAndImages = async (req, res) => {
 
         res.status(201).json({ message: "Thêm biến thể và ảnh thành công!" });
     } catch (error) {
-        console.error("❌ Lỗi khi thêm biến thể/ảnh:", error);
+        console.error(" Lỗi khi thêm biến thể/ảnh:", error);
         res.status(500).json({ message: "Lỗi server", error: error.message });
     }
 };
@@ -139,8 +139,8 @@ const updateVariantById = async (req, res) => {
         const variantId = req.params.variantId;
         const data = req.body;
 
-        console.log("🟢 Controller nhận variantId:", variantId);
-        console.log("🟢 Dữ liệu cập nhật:", data);
+        console.log(" Controller nhận variantId:", variantId);
+        console.log(" Dữ liệu cập nhật:", data);
 
         const result = await Product.updateVariantById(variantId, data);
 

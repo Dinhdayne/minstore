@@ -1,7 +1,6 @@
 const AddressModel = require('../models/Address');
 
 const AddressController = {
-    // 🔹 Lấy danh sách địa chỉ theo userId
     async getUserAddresses(req, res) {
         try {
             const { userId } = req.params;
@@ -11,8 +10,6 @@ const AddressController = {
             res.status(500).json({ error: err.message });
         }
     },
-
-    // 🔹 Thêm địa chỉ mới
     async createAddress(req, res) {
         try {
             const result = await AddressModel.create(req.body);
@@ -21,8 +18,6 @@ const AddressController = {
             res.status(500).json({ error: err.message });
         }
     },
-
-    // 🔹 Cập nhật địa chỉ
     async updateAddress(req, res) {
         try {
             const { addressId } = req.params;
@@ -32,8 +27,6 @@ const AddressController = {
             res.status(500).json({ error: err.message });
         }
     },
-
-    // 🔹 Xóa địa chỉ
     async deleteAddress(req, res) {
         try {
             const { addressId } = req.params;
@@ -43,8 +36,6 @@ const AddressController = {
             res.status(500).json({ error: err.message });
         }
     },
-
-    // 🔹 Đặt địa chỉ mặc định
     async setDefault(req, res) {
         try {
             const { address_id } = req.params;

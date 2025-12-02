@@ -1,7 +1,7 @@
 const pool = require("../config/db");
 
 const StatisticsModel = {
-    // 🟢 Doanh thu tổng hợp theo ngày / tháng / năm
+    //  Doanh thu tổng hợp theo ngày / tháng / năm
     async getRevenueSummary(period = 'month', startDate = null, endDate = null) {
         const dateFormat =
             period === "day"
@@ -10,7 +10,7 @@ const StatisticsModel = {
                     ? "%Y"
                     : "%Y-%m"; // mặc định theo tháng
 
-        // 🔹 Điều kiện WHERE động (nếu có chọn khoảng thời gian)
+        //  Điều kiện WHERE động (nếu có chọn khoảng thời gian)
         let whereClause = "WHERE status IN ('delivered', 'shipped')";
         const params = [dateFormat];
 
@@ -38,7 +38,7 @@ const StatisticsModel = {
     },
 
 
-    // 🟢 Top sản phẩm bán chạy
+    //  Top sản phẩm bán chạy
     async getTopProducts(limit = 10, days = 7) {
         const [rows] = await pool.query(
             `
@@ -63,7 +63,7 @@ const StatisticsModel = {
         return rows;
     },
 
-    // 🟢 Tổng quan tồn kho
+    //  Tổng quan tồn kho
     async getInventoryOverview() {
         const [rows] = await pool.query(`
             SELECT 
@@ -75,7 +75,7 @@ const StatisticsModel = {
         return rows[0];
     },
 
-    // 🟢 Lịch sử biến động kho
+    //  Lịch sử biến động kho
     async getInventoryLogs(limit = 100) {
         const [rows] = await pool.query(
             `
@@ -99,7 +99,7 @@ const StatisticsModel = {
         return rows;
     },
 
-    // 🟢 Thống kê khách hàng
+    //  Thống kê khách hàng
     async getCustomerStats() {
         const [rows] = await pool.query(`
             SELECT 
@@ -112,7 +112,7 @@ const StatisticsModel = {
         `);
         return rows[0];
     },
-    // 🔁 Thống kê hoàn hàng (cancelled hoặc returned)
+    // Thống kê hoàn hàng (cancelled hoặc returned)
     async getReturnStats() {
         const [rows] = await pool.query(`
             SELECT 

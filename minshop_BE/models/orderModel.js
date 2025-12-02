@@ -1,7 +1,7 @@
 const pool = require("../config/db");
 
 class OrderModel {
-    // 🔹 Tạo đơn hàng mới
+    //  Tạo đơn hàng mới
     static async createOrder({
         user_id,
         address_id,
@@ -20,7 +20,7 @@ class OrderModel {
 
             let coupon_id = null;
 
-            // 🟡 Nếu có mã giảm giá thì kiểm tra tính hợp lệ
+            //  Nếu có mã giảm giá thì kiểm tra tính hợp lệ
             if (coupon_code) {
                 const [couponRows] = await conn.query(
                     `SELECT * FROM Coupons 
@@ -38,14 +38,14 @@ class OrderModel {
                 const coupon = couponRows[0];
                 coupon_id = coupon.coupon_id;
 
-                // 🧮 Kiểm tra điều kiện đơn tối thiểu
+                //  Kiểm tra điều kiện đơn tối thiểu
                 if (coupon.min_order_amount && total_amount < coupon.min_order_amount) {
                     throw new Error(
                         `Đơn hàng chưa đạt giá trị tối thiểu để dùng mã giảm giá (${coupon.min_order_amount}₫)`
                     );
                 }
 
-                // 🧮 Tính giảm giá
+                //  Tính giảm giá
                 let discount = 0;
                 if (coupon.discount_type === "percentage") {
                     discount = (total_amount * coupon.discount_value) / 100;
@@ -56,14 +56,14 @@ class OrderModel {
                 discount_amount = Math.min(discount, total_amount);
                 total_amount = total_amount - discount_amount;
 
-                // 🟢 Cập nhật số lần sử dụng mã
+                //  Cập nhật số lần sử dụng mã
                 await conn.query(
                     `UPDATE Coupons SET uses_count = uses_count + 1 WHERE coupon_id = ?`,
                     [coupon_id]
                 );
             }
 
-            // 🟢 Tạo đơn hàng
+            //  Tạo đơn hàng
             const [orderResult] = await conn.query(
                 `INSERT INTO Orders 
              (user_id, address_id, total_amount, shipping_fee, discount_amount, notes, payment_method, status_Pay)
@@ -73,7 +73,7 @@ class OrderModel {
 
             const order_id = orderResult.insertId;
 
-            // 🟢 Thêm sản phẩm vào Order_Items
+            //  Thêm sản phẩm vào Order_Items
             for (const item of items) {
                 await conn.query(
                     `INSERT INTO Order_Items (order_id, variant_id, quantity, price)
@@ -82,7 +82,7 @@ class OrderModel {
                 );
             }
 
-            // 🟢 Nếu có mã giảm giá → lưu vào bảng Order_Coupons
+            //  Nếu có mã giảm giá → lưu vào bảng Order_Coupons
             if (coupon_id) {
                 await conn.query(
                     `INSERT INTO Order_Coupons (order_id, coupon_id) VALUES (?, ?)`,
@@ -102,9 +102,9 @@ class OrderModel {
     }
 
 
-    // 🔹 Lấy danh sách đơn hàng theo user_id
+    //  Lấy danh sách đơn hàng theo user_id
     static async getOrdersByUser(user_id) {
-        // 1️⃣ Lấy danh sách đơn hàng cơ bản
+        // 1️ Lấy danh sách đơn hàng cơ bản
         const [orders] = await pool.query(
             `SELECT 
                 o.order_id,
@@ -123,10 +123,10 @@ class OrderModel {
             [user_id]
         );
 
-        // 2️⃣ Nếu không có đơn thì trả rỗng
+        //  Nếu không có đơn thì trả rỗng
         if (orders.length === 0) return [];
 
-        // 3️⃣ Gắn danh sách sản phẩm vào từng đơn
+        //  Gắn danh sách sản phẩm vào từng đơn
         for (const order of orders) {
             const [items] = await pool.query(
                 `SELECT 
@@ -160,7 +160,7 @@ class OrderModel {
         return orders;
     }
 
-    // 🔹 Lấy tất cả đơn hàng (cho admin)
+    //  Lấy tất cả đơn hàng (cho admin)
     static async getAllOrders() {
         const [rows] = await pool.query(
             `SELECT 
@@ -185,7 +185,7 @@ class OrderModel {
         return rows;
     }
 
-    // 🔹 Lấy chi tiết đơn hàng
+    //  Lấy chi tiết đơn hàng
     static async getOrderDetail(order_id) {
         try {
             const [orderRows] = await pool.query(`
