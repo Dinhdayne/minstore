@@ -52,7 +52,7 @@ const addToCart = async (req, res) => {
             return res.status(400).json({ error: "Thiếu variantId hoặc quantity" });
         }
 
-        // 🔹 Tìm hoặc tạo giỏ hàng
+        //  Tìm hoặc tạo giỏ hàng
         const [existingCart] = await pool.query("SELECT * FROM carts WHERE user_id = ?", [userId]);
         let cartId;
 
@@ -66,7 +66,7 @@ const addToCart = async (req, res) => {
             cartId = newCart.insertId;
         }
 
-        // 🔹 Thêm hoặc cập nhật sản phẩm trong cart_items
+        //  Thêm hoặc cập nhật sản phẩm trong cart_items
         await pool.query(
             `INSERT INTO cart_items (cart_id, variant_id, quantity)
                 VALUES (?, ?, ?)

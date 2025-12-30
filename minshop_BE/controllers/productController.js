@@ -150,7 +150,7 @@ const updateVariantById = async (req, res) => {
             res.status(404).json({ message: "Không tìm thấy biến thể!" });
         }
     } catch (error) {
-        console.error("❌ Lỗi khi cập nhật biến thể:", error);
+        console.error(" Lỗi khi cập nhật biến thể:", error);
         res.status(500).json({ message: "Lỗi server khi cập nhật biến thể", error });
     }
 };

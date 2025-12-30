@@ -40,7 +40,7 @@ const AddressController = {
         try {
             const { address_id } = req.params;
             await AddressModel.setDefault(address_id);
-            console.log("📩 Received setDefault for:", req.params.address_id);
+            console.log(" Received setDefault for:", req.params.address_id);
             res.json({ message: 'Đặt làm mặc định thành công' });
         } catch (err) {
             res.status(500).json({ message: err.message });
